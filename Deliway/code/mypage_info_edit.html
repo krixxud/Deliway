@@ -6,7 +6,6 @@ include "../config/db.php";
 $sql = "SELECT * from member where user_id = '".$_COOKIE['user_id']."'";
 $result = mysqli_query($con, $sql);
 $row = mysqli_fetch_array($result);
-
 ?>
 <!DOCTYPE html>
 <html lang="ko">
@@ -55,6 +54,12 @@ $row = mysqli_fetch_array($result);
                     <dd><?php echo $row['user_phone'];?></dd>
                 </dl>
                 </section>
+
+                <div>
+                    <label for="userPhone">전화번호 변경</label>
+                    <input type="text" name="user_phone" value="<?php echo $row['user_phone'];?>">
+                    <button class="phone-btn btn" type="button"></button>
+                </div>
             <section class="address">
                 <h2 class="hidden">주소 변경</h2>
                 <div>
