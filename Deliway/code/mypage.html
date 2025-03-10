@@ -50,14 +50,11 @@ $row = mysqli_fetch_array($result);
         <section class="myinfo">
             <h2 class="hidden">내 정보</h2>
             <div class="myprofile">
-                <?php if ($row['file_copied_0'] == "") {
-
-                } else {
-                ?>
-                <img src="upload/<?php echo $row['file_copied_0'];?>" alt="프로필 이미지">
-                <?php
-                }
-                ?>
+                <?php if (empty($row['file_copied_0'])) { ?>
+                    <img src="../images/profile.png" alt="기본 프로필 이미지">
+                <?php } else { ?>
+                    <img src="upload/<?php echo $row['file_copied_0']; ?>" alt="프로필 이미지">
+                <?php } ?>
                 <div class="profileWrap">
                     <dl>
                         <dt class="hidden">닉네임</dt>
@@ -90,10 +87,8 @@ $row = mysqli_fetch_array($result);
                 <li><a href="./like_list.html">찜</a></li>
             </ul>
         </section>
-        <section class="store_registration">
-            <form method="post" action="store_registration.php">
-                <button type="submit">나의 매장 등록하기</button>
-            </form>
+        <section class="store-registration">
+                <a href="store_registration.html" class="sub-title2">나의 매장 등록하기</a>
         </section>
         <section class="activities">
             <div class="activitiesWrap">
