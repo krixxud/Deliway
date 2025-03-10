@@ -43,6 +43,11 @@ dl {
     border-bottom: 1px solid var(--background-grey);
 }
 
+.phone-number {
+    display: block;
+    padding: 0;
+}
+
 /* 입력 필드 공통 스타일 */
 form div {
     padding: 20px 0 0;
