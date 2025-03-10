@@ -7,24 +7,28 @@
     <title>정보 입력</title>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.4/css/all.min.css">
     <link rel="stylesheet" href="css/common.css">
+    <link rel="stylesheet" href="css/webfont.css">
+    <link rel="stylesheet" href="css/login-common.css">
     <link rel="stylesheet" href="css/login_info.css">
+    <script src="./js/common.js" defer></script>
 </head>
 
 <body>
     <header>
-        <a href="#"><i class="fas fa-angle-left" aria-hidden="true"></i><span class="hidden">뒤로가기</span></a>
+        <a href="#" onclick="goBack(event)"><i class="fas fa-angle-left" aria-hidden="true"></i><span class="hidden">뒤로가기</span></a>
         <h1 class="hidden">정보 입력</h1>
     </header>
     <main>
-        <form>
+        <form method="post" action="./PHP/login_info_ok.php" id='loginInfo'>
+            <input type="hidden" name="user_id" value="<?php echo $_GET['user_id'];?>">
             <label class="login">델리웨이에 사용할 <br>닉네임을 입력해주세요
-                <input class="login-placeholder" type="text" placeholder="닉네임을 입력해주세요">
+                <input class="login-placeholder" type="text" name="user_name" placeholder="닉네임을 입력해주세요" required>
             </label>
 
             <label class="login">위치 설정
-                <input class="login-placeholder" type="text" placeholder="주소검색">
+                <input class="login-placeholder" type="text" name="user_addr" placeholder="주소검색" required>
             </label>
-            <button class="title">다음</button>
+            <button type="submit" class="next title">다음</button>
         </form>
     </main>
 </body>

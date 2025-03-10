@@ -1,4 +1,4 @@
-@import url('./common.css');
+@charset "utf-8";
 
 body {
     background-color: var(--white);
@@ -76,6 +76,7 @@ fieldset > .btns {
     gap: 20px;
     margin: 0 25px;
     padding-right: 25px;
+    overflow: scroll;
 }
 
 .menu-title {

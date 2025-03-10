@@ -1,3 +1,13 @@
+<?php
+session_start();
+
+include "../config/db.php";
+
+$sql = "SELECT * from member where user_id = '".$_COOKIE['user_id']."'";
+$result = mysqli_query($con, $sql);
+$row = mysqli_fetch_array($result);
+
+?>
 <!DOCTYPE html>
 <html lang="ko">
 
@@ -6,67 +16,59 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>내 정보 변경</title>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
-    <link rel="stylesheet" href="./css/common.css">
+    <link rel="stylesheet" href="css/common.css">
+    <link rel="stylesheet" href="css/webfont.css">
     <link rel="stylesheet" href="./css/mypage_info_edit.css">
+    <script src="./js/common.js" defer></script>
 </head>
 
 <body>
     <header>
         <div class="page-header">
-            <a href="#" class="back"><i class="fa fa-angle-left icon"></i><span class="hidden">뒤로가기</span></a>
+            <a href="#" class="back" onclick="goBack(event)"><i class="fa fa-angle-left icon"></i><span class="hidden">뒤로가기</span></a>
             <h1 class="title">내 정보 변경</h1>
         </div>
     </header>
 
     <nav id="gnb">
-        <h2 class="hidden">메인 메뉴</h2>
+        <h2 class="hidden">주 메뉴</h2>
         <ul>
-            <li><a href="#" class="homeBtn">홈</a></li>
-            <li><a href="#" class="searchBtn">검색</a></li>
-            <li><a href="#" class="likeBtn">찜한 맛집</a></li>
-            <li><a href="#" class="reservationBtn">예약내역</a></li>
-            <li><a href="#" class="mypageBtn">마이페이지</a></li>
+          <li><a href="./main.html" class="homeBtn">홈</a></li>
+          <li><a href="./search.html" class="searchBtn">검색</a></li>
+          <li><a href="./like_list.html" class="likeBtn">찜한 맛집</a></li>
+          <li><a href="./reser_list.html" class="reservationBtn">예약내역</a></li>
+          <li><a href="./mypage.html" class="mypageBtn">마이페이지</a></li>
         </ul>
-</nav>
+    </nav>
+
 
     <main>
-        <h2 class="hidden">내 정보 변경</h2>
-        <form action="#" onsubmit="handleSubmit(event)">
+        <form method="post" action="./PHP/login_info_edit.php">
             <section class="personal">
-                <h2 class="hidden">전화번호 변경</h2>
+                <h2 class="hidden">내 정보 변경</h2>
                 <dl>
                     <dt>이름</dt>
-                    <dd>사용자</dd>
+                    <dd><?php echo $row['user_name'];?></dd>
                 </dl>
                 <dl>
                     <dt>전화번호</dt>
-                    <dd>010-1234-5678</dd>
+                    <dd><?php echo $row['user_phone'];?></dd>
                 </dl>
-                <div>
-                    <label for="phone">전화번호</label>
-                    <input type="tel" id="phone" name="phone" placeholder="변경할 전화번호" required>
-                    <button class="btn" type="button">인증번호 요청</button>
-                </div>
-                <div>
-                    <label for="verification">인증번호</label>
-                    <input type="text" id="verification" name="verification" placeholder="인증번호 입력" required>
-                    <button class="btn" type="button">인증번호 확인</button>
-                </div>
-            </section>
+                </section>
             <section class="address">
                 <h2 class="hidden">주소 변경</h2>
                 <div>
                     <label for="postcode">우편번호</label>
-                    <input type="text" id="postcode" name="postcode" placeholder="우편번호" readonly>
-                    <button class="btn" type="button" onclick="execDaumPostcode()">주소 검색</button>
+                    <input type="text" id="postcode" name="user_post" placeholder="우편번호" value="<?php echo $row['user_post'];?>" readonly>
+                    <button class="address-btn btn" type="button" onclick="execDaumPostcode()">주소 검색</button>
                 </div>
                 <div>
                     <label for="address">주소</label>
-                    <input type="text" id="address" name="address" placeholder="변경할 주소" readonly required>
+                    <input type="text" id="address" name="user_addr" placeholder="변경할 주소" value="<?php echo $row['user_addr'];?>" readonly required>
                 </div>
                 <div>
                     <label for="detailAddress">상세 주소</label>
-                    <input type="text" id="detailAddress" name="detailAddress" placeholder="상세 주소 입력" required>
+                    <input type="text" id="detailAddress" name="user_addr1" placeholder="상세 주소 입력" value="<?php echo $row['user_addr1'];?>" required>
                 </div>
             </section>
             <button type="submit" id="submitButton" class="title">변경하기</button>
@@ -80,19 +82,6 @@
                     document.getElementById('address').value = data.roadAddress; // 도로명 주소 입력
                 }
             }).open();
-        }
-        function handleSubmit(event) {
-            event.preventDefault(); // 기본 제출 방지
-            const submitButton = document.getElementById('submitButton');
-            submitButton.disabled = true; // 버튼 비활성화
-            submitButton.textContent = "변경 중..."; // 사용자 피드백 제공
-
-            // 여기서 실제 변경 요청 처리 (AJAX 등 가능)
-            setTimeout(() => {
-                alert("정보가 변경되었습니다.");
-                submitButton.textContent = "변경하기"; // 원래 버튼 텍스트 복구 (필요한 경우)
-                submitButton.disabled = false; // 버튼 다시 활성화 (필요한 경우)
-            }, 2000); // 예제용 2초 딜레이 (실제 요청에 맞게 조정 가능)
         }
     </script>
     <script src="https://t1.daumcdn.net/mapjsapi/bundle/postcode/prod/postcode.v2.js"></script>

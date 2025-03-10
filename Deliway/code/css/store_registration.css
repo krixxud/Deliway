@@ -1,0 +1,59 @@
+@charset "utf-8";
+
+.page-header .title {
+    margin-top: 20px;
+    text-align: center;
+}
+
+.back {
+    position: absolute;
+    top: 20px;
+    left: 25px;
+    font-size: 22px;
+}
+
+.store-registration {
+    padding: 25px;
+    margin: 30px 0;
+}
+
+.input-group {
+    margin-bottom: 20px;
+}
+
+.input-group label {
+    display: block;
+    margin-bottom: 15px;
+}
+
+.input-group input,
+.input-group textarea {
+    width: 100%;
+    padding: 15px;
+    border: 1px solid var(--background-grey);
+    border-radius: 8px;
+    font-size: 16px;
+}
+
+input:focus {
+    outline: none;
+    border: 2px solid var(--primary);
+}
+textarea:focus {
+    outline: none;
+    border: 2px solid var(--primary);
+}
+
+.submit-btn {
+    position: absolute;
+    bottom: 20px;
+    right: 25px;
+    left: 25px;
+    display: block;
+    height: 60px;
+    background-color: var(--primary);
+    color: var(--white);
+    border: none;
+    border-radius: 10px;
+    cursor: pointer;
+}

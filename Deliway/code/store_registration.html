@@ -1,0 +1,50 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>매장 등록 신청</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <link rel="stylesheet" href="./css/common.css">
+    <link rel="stylesheet" href="./css/store_registration.css">
+</head>
+<body>
+    <header>
+        <div class="page-header">
+            <a href="#" class="back" onclick="history.back();"><i class="fa fa-angle-left icon"></i><span class="hidden">뒤로가기</span></a>
+            <h1 class="title">매장 등록 신청하기</h1>
+        </div>
+    </header>
+    <main>
+        <section class="store-registration">
+            <form action="store_registration_process.php" method="post" enctype="multipart/form-data">
+                <div class="input-group">
+                    <label for="store-name">매장명</label>
+                    <input type="text" id="store-name" name="store_name" required>
+                </div>
+                <div class="input-group">
+                    <label for="store-address">매장 주소</label>
+                    <input type="text" id="store-address" name="store_address" required>
+                </div>
+                <div class="input-group">
+                    <label for="store-phone">매장 전화번호</label>
+                    <input type="tel" id="store-phone" name="store_phone" required>
+                </div>
+                <div class="input-group">
+                    <label for="business-license">사업자 등록증</label>
+                    <input type="file" id="business-license" name="business_license" accept="image/*,application/pdf" required>
+                </div>
+                <div class="input-group">
+                    <label for="store-description">매장 소개</label>
+                    <textarea id="store-description" name="store_description" rows="4" required></textarea>
+                </div>
+                <div class="input-group">
+                    <label for="store-images">매장 이미지</label>
+                    <input type="file" id="store-images" name="store_images[]" accept="image/*" multiple>
+                </div>
+                <button type="submit" class="submit-btn title">신청하기</button>
+            </form>
+        </section>
+    </main>
+</body>
+</html>

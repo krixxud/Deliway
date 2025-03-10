@@ -5,9 +5,12 @@
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+  <link rel="stylesheet" href="css/common.css">
+  <link rel="stylesheet" href="css/webfont.css">
   <link rel="stylesheet" href="./css/review_write.css">
-
+  
   <script src="./js/review_write.js" defer></script>
+  <script src="./js/common.js" defer></script>
   
   <title>리뷰작성</title>
 </head>
@@ -15,7 +18,7 @@
 <body>
   <header>
     <h1 class="title">리뷰 작성하기</h1>
-    <a href="#"><i class="fa fa-angle-left" aria-hidden="true" style="color: black;"></i><span
+    <a href="#"><i class="fa fa-angle-left" aria-hidden="true" style="color: black;" onclick="goBack(event)"></i><span
         class="hidden">뒤로가기</span></a>
   </header>
 
@@ -103,7 +106,7 @@
             <span onclick="setRating(3)">★</span>
             <span onclick="setRating(4)">★</span>
             <span onclick="setRating(5)">★</span>
-            <input type="hidden" id="rating" name="rating" value="0"/>
+            <input type="hidden" id="rating" name="rating" value="0">
           </div>
         </div>
 
@@ -138,7 +141,7 @@
   <div id="completionModal" class="modal">
     <div class="modal-content">
       <p>리뷰등록이 완료되었습니다</p>
-      <button onclick="closeModal('completionModal')">확인</button>
+      <button onclick="closeModal('completionModal'); window.location.href='./review_detail.html'">확인</button>
     </div>
   </div>
 </body>

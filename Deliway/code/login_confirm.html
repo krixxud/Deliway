@@ -1,3 +1,11 @@
+<?php
+session_start();
+include "../config/db.php";
+
+$sql = "select * from member where user_id = '".$_GET['user_id']."'";
+$result = mysqli_query($con,$sql);
+$row = mysqli_fetch_array($result);
+?>
 <!DOCTYPE html>
 <html lang="ko">
 
@@ -7,33 +15,35 @@
     <title>프로필 정보입력</title>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.4/css/all.min.css">
     <link rel="stylesheet" href="css/common.css">
+    <link rel="stylesheet" href="css/webfont.css">
     <link rel="stylesheet" href="css/login_confirm.css">
+    <script src="./js/common.js" defer></script>
 </head>
 
 <body>
     <header>
-        <a href="#"><i class="fas fa-angle-left" aria-hidden="true"></i><span class="hidden">뒤로가기</span></a>
+        <a href="#" onclick="goBack(event)"><i class="fas fa-angle-left" aria-hidden="true"></i><span class="hidden">뒤로가기</span></a>
         <h1 class="hidden">프로필 정보입력</h1>
     </header>
     <main>
         <form>
-            <h3 class="login">프로필 설정이 완료되었습니다!</h3>
+            <h2 class="login">프로필 설정이 완료되었습니다!</h2>
             <div>
                 <label class="title">닉네임
-                    <input class="login-placeholder" type="text" placeholder="닉네임" readonly>
+                    <input class="login-placeholder" value="<?php echo $row['user_name'];?>" type="text" readonly>
                 </label>
             </div>
             <div>
                 <label class="title">이메일 (아이디)
-                    <input class="login-placeholder" type="text" placeholder="example@email.com" readonly>
+                    <input class="login-placeholder" value="<?php echo $row['user_id'];?>" type="text" readonly>
                 </label>
             </div>
             <div>
                 <label class="title">주소 위치
-                    <input class="login-placeholder" type="text" placeholder="주소 위치 정보" readonly>
+                    <input class="login-placeholder" value="<?php echo $row['user_addr'];?>" type="text" readonly>
                 </label>
             </div>
-            <button>회원가입 완료</button>
+            <button type="button" class="next title" onclick = "window.location.href = 'login_email.html'" >로그인 바로가기</button>
         </form>
     </main>
 </body>

@@ -6,20 +6,23 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>매장이름 리뷰</title>
     <link rel="stylesheet" href="./css/common.css">
+    <link rel="stylesheet" href="css/webfont.css">
     <link rel="stylesheet" href="./css/review_more.css">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.4/css/all.min.css">
+    <script src="./js/common.js" defer></script>
 </head>
 
 <body>
     <header>
         <div class="page-header">
-            <a href="#" class="back-btn"><i class="fa fa-angle-left icon"></i><span class="hidden">뒤로가기</span></a>
+            <a href="#" onclick="goBack(event)"  class="back-btn"><i class="fa fa-angle-left icon"></i><span class="hidden">뒤로가기</span></a>
             <h1 class="title">리뷰</h1>
             <div class="header-placeholder"></div>
         </div>
     </header>
     <main>
         <section class="review-container">
+            <h2 class="hidden">리뷰내용</h2>
             <div class="review-header">
                 <div class="user-info">
                     <div class="profile-image">
@@ -63,6 +66,7 @@
             </div>
         </section>
         <section class="review-container">
+            <h2 class="hidden">리뷰내용</h2>
             <div class="review-header">
                 <div class="user-info">
                     <div class="profile-image">
@@ -106,6 +110,7 @@
             </div>
         </section>
         <section class="review-container">
+            <h2 class="hidden">리뷰내용</h2>
             <div class="review-header">
                 <div class="user-info">
                     <div class="profile-image">

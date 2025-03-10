@@ -1,3 +1,5 @@
+@charset "utf-8";
+
 body {
     background: var(--background-grey);
 }
@@ -304,4 +306,3 @@ textarea {
 .confirm-btn:hover {
     background-color: var(--primary-dark);
 }
-

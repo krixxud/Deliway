@@ -1,3 +1,17 @@
+<?php
+session_start();
+
+include "../config/db.php";
+
+if($_COOKIE['user_id'] == "") {
+    echo "<script> alert('로그인 후 접근할 수 있습니다'); location.href='login.html';</script>";
+}
+$sql = "SELECT * from member where user_id = '".$_COOKIE['user_id']."'";
+$result = mysqli_query($con,$sql);
+$row = mysqli_fetch_array($result);
+
+?>
+
 <!DOCTYPE html>
 <html lang="ko">
 
@@ -9,37 +23,47 @@
     <link rel="stylesheet" href="./css/common.css">
     <link rel="stylesheet" href="./css/webfont.css">
     <link rel="stylesheet" href="./css/mypage.css">
+
+    <script src="./js/common.js" defer></script>
 </head>
 
 <body>
     <header>
         <div class="page-header">
-            <a href="#"><i class="fa fa-angle-left icon"></i><span class="hidden">뒤로가기</span></a>
+            <a href="#" onclick="goBack(event)"><i class="fa fa-angle-left icon"></i><span
+                    class="hidden">뒤로가기</span></a>
             <h1 class="title">마이페이지</h1>
-            <a href="#"><i class="fas fa-cog icon"></i><span class="hidden">설정</span></a>
+            <a href="./mypage_setting.html"><i class="fas fa-cog icon"></i><span class="hidden">설정</span></a>
         </div>
     </header>
-
     <nav id="gnb">
-        <h2 class="hidden">메인 메뉴</h2>
+        <h2 class="hidden">주 메뉴</h2>
         <ul>
-            <li><a href="#" class="homeBtn">홈</a></li>
-            <li><a href="#" class="searchBtn">검색</a></li>
-            <li><a href="#" class="likeBtn">찜한 맛집</a></li>
-            <li><a href="#" class="reservationBtn">예약내역</a></li>
-            <li><a href="#" class="mypageBtn">마이페이지</a></li>
+            <li><a href="./main.html" class="homeBtn">홈</a></li>
+            <li><a href="./search.html" class="searchBtn">검색</a></li>
+            <li><a href="./like_list.html" class="likeBtn">찜한 맛집</a></li>
+            <li><a href="./reser_list.html" class="reservationBtn">예약내역</a></li>
+            <li><a href="./mypage.html" class="mypageBtn">마이페이지</a></li>
         </ul>
     </nav>
-
     <main>
         <section class="myinfo">
             <h2 class="hidden">내 정보</h2>
             <div class="myprofile">
-                <img src="https://placehold.co/80" alt="프로필 이미지">
+                <?php if ($row['file_copied_0'] == "") {
+
+                } else {
+                ?>
+                <img src="upload/<?php echo $row['file_copied_0'];?>" alt="프로필 이미지">
+                <?php
+                }
+                ?>
                 <div class="profileWrap">
                     <dl>
                         <dt class="hidden">닉네임</dt>
-                        <dd class="title">닉네임</dd>
+                        <dd class="title">
+                            <?php echo $_COOKIE['user_name'];?>님
+                        </dd>
                     </dl>
                     <div class="follow">
                         <dl>
@@ -54,22 +78,27 @@
                 </div>
             </div>
             <div class="myinfo-btn">
-                <a href="#">프로필 수정</a>
-                <a href="#">내 정보 수정</a>
+                <a href="./mypage_profile_edit.html">프로필 수정</a>
+                <a href="./mypage_info.html">내 정보 수정</a>
             </div>
         </section>
         <section class="mymenu">
             <h2 class="title hidden">나의 예약 리뷰 찜 관리</h2>
             <ul class="mymenuWrap">
-                <li><a href="#">예약</a></li>
+                <li><a href="./reser_list.html">예약</a></li>
                 <li><a href="#">내 리뷰</a></li>
-                <li><a href="#">찜</a></li>
+                <li><a href="./like_list.html">찜</a></li>
             </ul>
+        </section>
+        <section class="store_registration">
+            <form method="post" action="store_registration.php">
+                <button type="submit">나의 매장 등록하기</button>
+            </form>
         </section>
         <section class="activities">
             <div class="activitiesWrap">
                 <h2 class="title">최근활동</h2>
-                <a href="#" class="body1">전체보기 <i class="fas fa-angle-right"></i></a>
+                <a href="./alarm.html" class="body1">전체보기 <i class="fas fa-angle-right"></i></a>
             </div>
             <div class="activitiesContent">
                 <p>최근 정보 글 내용 입니다.</p>
@@ -87,6 +116,11 @@
                 <p>최근 정보 글 내용 입니다.</p>
                 <span class="small">10분전</span>
             </div>
+        </section>
+        <section class="logout-section">
+            <form method="post" action="./PHP/logout.php">
+                <button class="logout" type="submit">로그아웃</button>
+            </form>
         </section>
     </main>
 </body>

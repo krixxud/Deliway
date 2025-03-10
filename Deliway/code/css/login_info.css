@@ -8,13 +8,13 @@ body{
     display: flex;
     flex-direction: column;
     align-content: center;
-    justify-content: center;
-    padding: 0 25px;
+    padding: 100px 25px;
 }
 
+/* 뒤로가기 */
 header a {
     position: absolute;
-    top: 30px;
+    top: 20px;
     left: 25px;
     font-size: 22px;
     color: var(--black);
@@ -25,22 +25,23 @@ form {
 }
 
 input{
+    margin: 15px 0 20px;
     width: 100%;
-    margin: 20px 0;
-    padding: 0 12px;
+    padding: 0 15px;
     height: 70px;
-    font-size: 20px;
     border-radius: 10px;
     border: 1px solid var(--text-grey);
 }
 
 input:focus {
-    border: 1px solid var(--primary);
+    outline: none;
+    border: 2px solid var(--primary);
 }
-
-button {
-    margin-top: 20px;
-    width: 100%;
+.next {
+    position: fixed;
+    bottom: 20px;
+    left: 25px;
+    right: 25px;
     height: 70px;
     background-color: var(--primary);
     color: var(--white);

@@ -7,12 +7,12 @@ body{
     display: flex;
     flex-direction: column;
     align-content: center;
-    justify-content: center;
-    padding: 0 25px;
+    padding: 100px 25px;
 }
+/* 뒤로가기 */
 header a {
     position: absolute;
-    top: 30px;
+    top: 20px;
     left: 25px;
     font-size: 22px;
     color: var(--black);
@@ -20,36 +20,45 @@ header a {
 form {
     width: 100%;
 }
-
 div{
+    position: relative;
     padding-bottom: 20px;
 }
-
 div span {
     margin-bottom: 5px;
     color: var(--err);
 }
-label {
-    margin-bottom: 10px;
-}
-
 input{
-    margin: 10px 0;
-    padding: 0 12px;
+    margin: 15px 0 0;
+    padding: 0 15px;
     width: 100%;
     height: 70px;
     font-size: 20px;
     border-radius: 10px;
     border: 1px solid var(--text-grey);
 }
-
+input[name="user_pass1"] {
+    margin: 10px 0 20px;
+}
 input:focus {
     outline:none;
     border: 1px solid var(--primary);
 }
-
-button {
-    width: 100%;
+.btn {
+    position: absolute;
+    top: 48px;
+    right: 10px;
+    padding: 15px 20px;
+    border: none;
+    border-radius: 10px;
+    color: var(--white);
+    background: var(--primary);
+}
+.next {
+    position: fixed;
+    bottom: 20px;
+    left: 25px;
+    right: 25px;
     height: 70px;
     background-color: var(--primary);
     color: var(--white);

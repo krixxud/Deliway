@@ -1,3 +1,5 @@
+@charset "utf-8";
+
 /* 기초 셋팅 */
 :root {
     /* Color design */
@@ -14,7 +16,7 @@
     /* Font Sizes */
     --login-font-size: 24px;
     --title-font-size: 20px;
-    --login-placeholder-font-size:400 20px;
+    --login-placeholder-font-size: 20px;
     --sub-title2-font-size: 18px;
     --sub-title1-font-size: 16px;
     --body2-font-size: 16px;
@@ -62,7 +64,7 @@ body {
 
 .login {
     font-family: 'Pretendard-Bold';
-    font-size: 26px;
+    font-size: 20px;
 }
 .login-placeholder {
     font-family: 'Pretendard-Medium';

@@ -5,13 +5,16 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>Deliway - 로그인</title>
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.4/css/all.min.css">
-  <link rel="stylesheet" href="./css/common.css">
+  <link rel="stylesheet" href="css/webfont.css">
+  <link rel="stylesheet" href="css/common.css">
   <link rel="stylesheet" href="./css/login_email.css">
-</head>
 
+  <script src="./js/common.js" defer></script>
+</head>
+ 
 <body>
   <header>
-      <a href="#" class="back" aria-label="뒤로가기">
+      <a href="#" onclick="goBack(event)" class="back" aria-label="뒤로가기">
         <i class="fas fa-angle-left" aria-hidden="true"></i>
         <span class="hidden">뒤로가기</span>
       </a>
@@ -21,34 +24,36 @@
   <main>
     <section class="login-section">
       <h2 class="login">로그인</h2>
-      <form id="login-form" method="post" action="#">
+      <form id="login-form" method="post" action="./PHP/login_email_ok.php">
         <div class="input-group">
           <label for="email" class="hidden">이메일 주소</label>
-          <input class="login-placeholder" type="email" id="email" name="email" placeholder="이메일 주소를 입력하세요" required autocomplete="email">
+          <input class="login-placeholder" type="email" id="email" name="user_id" placeholder="이메일 주소를 입력하세요" required>
           <div class="error-message small">올바른 이메일 주소를 입력해주세요.</div>
         </div>
 
         <div class="input-group">
           <label for="password" class="hidden">비밀번호</label>
-          <input class="login-placeholder" type="password" id="password" name="password" placeholder="비밀번호를 입력하세요" required autocomplete="current-password">
+          <input class="login-placeholder" type="password" id="password" name="user_pass" placeholder="비밀번호를 입력하세요" required>
           <div class="error-message small">비밀번호를 입력해주세요.</div>
         </div>
         
         <div class="options-row">
           <div class="remember-me">
-            <input type="checkbox" name="remember" id="checkbox">
-            <label for="checkbox" class="body1">로그인 상태 유지하기</label>
+            <label for="checkbox" class="body1">
+            <input id="checkbox" type="checkbox" name="auto_login" value="1" checked>
+            로그인 상태 유지하기</label>
           </div>
           <a href="#" class="body1 find-account">아이디 | 비밀번호 찾기</a>
         </div>
         
-        <button type="submit" class="title">로그인</button>
+        <!-- <button type="submit" class="title">로그인</button> -->
+        <button type="submit" value="로그인" class="title">로그인</button>
         
-        <p class="signup-prompt body1">아직 회원이 아니신가요? <a href="#" class="body1-bold">회원가입</a></p>
+        <p class="signup-prompt body1">아직 회원이 아니신가요? <a href="./login_terms.html" class="body1-bold">회원가입</a></p>
       </form>
     </section>
   </main>
-
+<!--
   <script>
     // Simple validation for demonstration
     document.getElementById('login-form').addEventListener('submit', function(e) {
@@ -80,6 +85,6 @@
         this.submit();
       }
     });
-  </script>
+  </script> -->
 </body>
 </html>

@@ -1,0 +1,178 @@
+<?php
+session_start();
+include "../config/db.php";
+?>
+<!DOCTYPE html>
+<html lang="ko">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>맛집 플랫폼 관리자 대시보드</title>
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
+    <link rel="stylesheet" href="./css/manager-common.css">
+    <link rel="stylesheet" href="./css/manager-dashboard.css">
+    <script src="./js/manager-common.js" defer></script>
+    <!-- <script src="./js/manager-dashboard.js" defer></script> -->
+</head>
+
+<body>
+    <?php
+
+    $sql_member = "select * from member";
+    $result_member = mysqli_query($con,$sql_member);
+    $row_num_member = mysqli_num_rows($result_member); //레코드의 갯수
+
+    $sql_store = "select * from store";
+    $result_store = mysqli_query($con,$sql_store);
+    $row_num_store = mysqli_num_rows($result_store); //레코드의 갯수
+    
+    ?>
+
+    <aside class="sidebar">
+        <div class="logo">맛집관리</div>
+        <ul class="nav-menu">
+            <li class="nav-item">
+                <a href="./manager-dashboard.html" class="nav-link">
+                    <i class="fas fa-home"></i>
+                    <span>대시보드</span>
+                </a>
+            </li>
+            <li class="nav-item">
+                <a href="./manager-store.html" class="nav-link">
+                    <i class="fas fa-utensils"></i>
+                    <span>식당 관리</span>
+                </a>
+            </li>
+            <li class="nav-item">
+                <a href="./manager-user.html" class="nav-link">
+                    <i class="fas fa-users"></i>
+                    <span>회원 관리</span>
+                </a>
+            </li>
+            <li class="nav-item">
+                <a href="./manager-review.html" class="nav-link">
+                    <i class="fas fa-star"></i>
+                    <span>리뷰 관리</span>
+                </a>
+            </li>
+            <li class="nav-item">
+                <a href="./manager-statistics.html" class="nav-link">
+                    <i class="fas fa-chart-bar"></i>
+                    <span>통계</span>
+                </a>
+            </li>
+            <li class="nav-item">
+                <a href="./manager-setting.html" class="nav-link">
+                    <i class="fas fa-cog"></i>
+                    <span>설정</span>
+                </a>
+            </li>
+        </ul>
+    </aside>
+    <!-- 메인 컨텐츠 -->
+    <div class="main-content">
+        <a class="logout" href="logout.php">로그아웃</a>
+        <div class="header">
+            <h1>대시보드</h1>
+            <?php echo $_SESSION['adm_name'];?> 님 접속하셨습니다.<br><br>
+            <p>플랫폼 현황을 한눈에 확인하세요</p>
+        </div>
+
+        <!-- 통계 카드 -->
+        <div class="dashboard-cards">
+            <div class="card">
+                <div class="card-title">총 식당 수</div>
+                <div class="card-value">
+                    <?php echo $row_num_store ?>
+                </div>
+            </div>
+            <div class="card">
+                <div class="card-title">총 회원 수</div>
+                <div class="card-value">
+                    <?php echo $row_num_member ?>
+                </div>
+            </div>
+            <div class="card">
+                <div class="card-title">오늘의 예약</div>
+                <div class="card-value">342</div>
+            </div>
+            <div class="card">
+                <div class="card-title">신규 리뷰</div>
+                <div class="card-value">127</div>
+            </div>
+        </div>
+
+        <!-- 최근 등록된 식당 목록 -->
+        <div class="table-container">
+            <h2 style="margin-bottom: 20px;">최근 등록된 식당</h2>
+            <table>
+                <thead>
+                    <tr>
+                        <th>식당명</th>
+                        <th>위치</th>
+                        <th>카테고리</th>
+                        <th>등록일</th>
+                        <th>상태</th>
+                        <th>관리</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <?php if($row_num_store == 0) { ?>
+                    <tr>
+                        <td colspan="6">등록된 식당 정보가 없습니다.</td>
+                    </tr>
+                    <?php
+                    } else {
+                    ?>
+                    <tr>
+                        <td>11</td>
+                        <td>11</td>
+                        <td>11</td>
+                        <td>11</td>
+                        <td>11</td>
+                    </tr>
+                    <?php
+                    }
+                    ?>
+                </tbody>
+            </table>
+        </div>
+    </div>
+    <!-- 상세보기 버튼 모달창 -->
+    <div id="restaurantModal" class="modal">
+        <div class="modal-content">
+            <span class="close">&times;</span>
+            <h2>식당 상세 정보</h2>
+            <div class="restaurant-info">
+                <div class="info-row">
+                    <label>식당명:</label>
+                    <span id="modalRestaurantName"></span>
+                </div>
+                <div class="info-row">
+                    <label>위치:</label>
+                    <span id="modalLocation"></span>
+                </div>
+                <div class="info-row">
+                    <label>카테고리:</label>
+                    <span id="modalCategory"></span>
+                </div>
+                <div class="info-row">
+                    <label>등록일:</label>
+                    <span id="modalRegDate"></span>
+                </div>
+                <div class="info-row">
+                    <label>상태:</label>
+                    <span id="modalStatus"></span>
+                </div>
+            </div>
+            <div class="modal-actions">
+                <button class="btn btn-success" id="approveBtn">승인</button>
+                <button class="btn btn-danger" id="rejectBtn">반려</button>
+                <button class="btn btn-secondary" id="closeBtn">닫기</button>
+            </div>
+        </div>
+    </div>
+</body>
+
+</html>

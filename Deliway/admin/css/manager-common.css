@@ -1,0 +1,172 @@
+@charset "utf-8";
+
+:root {
+    /* Color design */
+    --primary: #834EC3;
+    --primary-dark: #613991;
+    --primary-light: #E0D3F0;
+    --black: #000000;
+    --white: #FFFFFF;
+    --err: #ff0000;
+    --text-grey: #6F6F6F;
+    --text-grey-dark: #272727;
+    --background-grey: #EDEDED;
+}
+
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+}
+
+body,h1,h2,h3,h4,h5,h6,a,ul,li,ol,dl,dt,dd,p,div,form,fieldset,button{
+    margin: 0;
+    padding: 0;
+}
+
+/* 폰트 */
+body {
+    font-family: 'Pretendard-Medium';
+    font-size: 16px;
+}
+
+/* 메인컨텐츠 영역 */
+.main-content {
+    margin-left: var(--sidebar-width);
+    padding: 20px;
+}
+
+/* 사이드바 스타일 */
+.sidebar {
+    position: fixed;
+    left: 0;
+    top: 0;
+    width: var(--sidebar-width);
+    height: 100vh;
+    background-color: white;
+    padding: 20px;
+    box-shadow: var(--shadow);
+}
+
+.logo {
+    font-size: 24px;
+    font-weight: bold;
+    color: var(--primary-color);
+    margin-bottom: 30px;
+    text-align: center;
+}
+
+.nav-menu {
+    list-style: none;
+}
+
+.nav-item {
+    margin-bottom: 10px;
+}
+
+.nav-item a {
+    display: flex;
+    align-items: center;
+    gap: 0.75rem;
+    padding: 0.875rem 1rem;
+    color: var(--gray-600);
+    text-decoration: none;
+    border-radius: var(--border-radius);
+    transition: var(--transition);
+}
+
+.nav-item a:hover {
+    background: var(--gray-100);
+    color: var(--primary-color);
+}
+
+.nav-item a.active {
+    background: var(--primary-color);
+    color: white;
+}
+
+.nav-link {
+    display: flex;
+    align-items: center;
+    padding: 12px 15px;
+    color: var(--text-color);
+    text-decoration: none;
+    border-radius: var(--border-radius);
+    transition: var(--transition);
+}
+
+.nav-link:hover {
+    background-color: var(--secondary-color);
+    color: var(--primary-color);
+}
+
+.nav-link i {
+    margin-right: 10px;
+    width: 20px;
+}
+
+.btn {
+    padding: 8px 15px;
+    border: none;
+    border-radius: var(--border-radius);
+    cursor: pointer;
+    font-size: 14px;
+    transition: var(--transition);
+    display: inline-flex;
+    align-items: center;
+    gap: 5px;
+}
+
+.btn-primary {
+    background-color: var(--primary-color);
+    color: white;
+}
+
+.btn-secondary {
+    background-color: var(--gray-200);
+    color: var(--text-color);
+}
+
+.btn-success {
+    background-color: var(--success-color);
+    color: white;
+}
+
+.btn-danger {
+    background-color: var(--danger-color);
+    color: white;
+}
+
+.approved {
+    background: var(--success-color);
+    color:#fff;
+}
+
+.rejected {
+    background: var(--danger-color);
+    color: #fff;
+}
+
+.pending {
+    background: var(--warning-color);
+    color: #fff;
+}
+
+/* 반응형 디자인 */
+@media (max-width: 768px) {
+    .sidebar {
+        width: 70px;
+        padding: 10px;
+    }
+
+    .logo {
+        font-size: 20px;
+    }
+
+    .nav-link span {
+        display: none;
+    }
+    .main-content {
+        margin-left: 70px;
+    }
+}
