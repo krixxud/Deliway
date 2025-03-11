@@ -1,6 +1,6 @@
 <?php
 session_start();
-include "../../config/db.php";
+include "../config/db.php";
 
 $user_id = $_POST['user_id'];
 $store_name = $_POST['store_name'];
@@ -8,7 +8,7 @@ $store_address1 = $_POST['store_address1'];
 $store_memo = $_POST['store_memo'];
 $store_call = $_POST['store_call'];
 
-$store_ing = "신청";
+$store_ing = "승인 대기 중";
 
 $files = $_FILES["upfile"];
 	$count = count($files["name"]);

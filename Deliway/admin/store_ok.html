@@ -1,0 +1,23 @@
+<?php
+session_start();
+include "../config/db.php";
+?>
+
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Document</title>
+</head>
+<body>
+    <h1>업체 승인</h1>
+    <form action="store_ok.php" method="post">
+        <input type="hidden" name="store_idx" value="<?php echo $_GET['store_idx'];?>">
+        <input type="radio" name="store_ing" value="승인">승인&nbsp;
+        <input type="radio" name="store_ing" value="반려">반려<br><br>
+
+        <input type="submit" value="등록">
+    </form>
+</body>
+</html>

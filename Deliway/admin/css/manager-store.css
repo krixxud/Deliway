@@ -120,8 +120,9 @@ tr:hover {
     font-weight: 500;
 }
 .badge-pending {
-    background-color: var(--warning-color);
-    color: white;
+    color: black;
+    text-decoration: none;
+    
 }
 .badge-approved {
     background-color: var(--success-color);

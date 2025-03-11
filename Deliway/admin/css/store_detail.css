@@ -1,0 +1,20 @@
+@charset "utf-8";
+
+/* 메인 컨텐츠 영역 */
+.main-content {
+    margin-left: var(--sidebar-width);
+    padding: 20px;
+}
+/* 식당 목록 테이블 */
+.restaurant-table {
+    background-color: white;
+    padding: 20px;
+    border-radius: var(--border-radius);
+    box-shadow: var(--shadow);
+    overflow-x: auto;
+    margin-bottom: 20px;
+}
+
+.store_img {
+    
+}
