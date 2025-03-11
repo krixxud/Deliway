@@ -1,5 +1,9 @@
+<?php
+session_start();
+?>
 <!DOCTYPE html>
 <html lang="ko">
+
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
@@ -8,43 +12,105 @@
     <link rel="stylesheet" href="./css/common.css">
     <link rel="stylesheet" href="./css/store_registration.css">
 </head>
+
 <body>
     <header>
         <div class="page-header">
-            <a href="#" class="back" onclick="history.back();"><i class="fa fa-angle-left icon"></i><span class="hidden">뒤로가기</span></a>
+            <a href="#" onclick="history.back();"><i class="fa fa-angle-left icon"></i><span
+                    class="hidden">뒤로가기</span></a>
             <h1 class="title">매장 등록 신청하기</h1>
         </div>
     </header>
     <main>
         <section class="store-registration">
-            <form action="store_registration_process.php" method="post" enctype="multipart/form-data">
+            <form method="post" action="./PHP/ask_ok.php" enctype="multipart/form-data">
+                <input type="hidden" name="user_id" value="<?php echo $_COOKIE['user_id'];?>">
                 <div class="input-group">
-                    <label for="store-name">매장명</label>
-                    <input type="text" id="store-name" name="store_name" required>
+                    <label for="store-name">매장명
+                        <input type="text" id="store-name" name="store_name" required>
+                    </label>
                 </div>
                 <div class="input-group">
-                    <label for="store-address">매장 주소</label>
-                    <input type="text" id="store-address" name="store_address" required>
+                    <label for="store-address">매장 주소
+                        <input type="text" id="sample5_address" placeholder="주소 검색" name="store_address1">
+                    </label>
+                    <input type="button" onclick="sample5_execDaumPostcode()" value="검색"><br>
+                </div>
+                <div id="map"></div>
+                <script src="//t1.daumcdn.net/mapjsapi/bundle/postcode/prod/postcode.v2.js"></script>
+                <script src="//dapi.kakao.com/v2/maps/sdk.js?appkey=cf296d5c3ef945628fc8bfd4d32c00a8&libraries=services"></script>
+                <script>
+                    var mapContainer = document.getElementById('map'), // 지도를 표시할 div
+                        mapOption = {
+                            center: new daum.maps.LatLng(37.537187, 127.005476), // 지도의 중심좌표
+                            level: 5 // 지도의 확대 레벨
+                        };
+
+                    //지도를 미리 생성
+                    var map = new daum.maps.Map(mapContainer, mapOption);
+                    //주소-좌표 변환 객체를 생성
+                    var geocoder = new daum.maps.services.Geocoder();
+                    //마커를 미리 생성
+                    var marker = new daum.maps.Marker({
+                        position: new daum.maps.LatLng(37.537187, 127.005476),
+                        map: map
+                    });
+
+
+                    function sample5_execDaumPostcode() {
+                        new daum.Postcode({
+                            oncomplete: function (data) {
+                                var addr = data.address; // 최종 주소 변수
+
+                                // 주소 정보를 해당 필드에 넣는다.
+                                document.getElementById("sample5_address").value = addr;
+                                // 주소로 상세 정보를 검색
+                                geocoder.addressSearch(data.address, function (results, status) {
+                                    // 정상적으로 검색이 완료됐으면
+                                    if (status === daum.maps.services.Status.OK) {
+
+                                        var result = results[0]; //첫번째 결과의 값을 활용
+
+                                        // 해당 주소에 대한 좌표를 받아서
+                                        var coords = new daum.maps.LatLng(result.y, result.x);
+                                        // 지도를 보여준다.
+                                        mapContainer.style.display = "block";
+                                        map.relayout();
+                                        // 지도 중심을 변경한다.
+                                        map.setCenter(coords);
+                                        // 마커를 결과값으로 받은 위치로 옮긴다.
+                                        marker.setPosition(coords)
+                                    }
+                                });
+                            }
+                        }).open();
+                    }
+                </script>
+                <div class="input-group">
+                    <label for="store-phone">매장 전화번호
+                        <input type="tel" id="store-phone" name="store_call" required>
+                    </label>
                 </div>
                 <div class="input-group">
-                    <label for="store-phone">매장 전화번호</label>
-                    <input type="tel" id="store-phone" name="store_phone" required>
+                    <label for="business-license">사업자 등록증
+                        <input type="file" id="business-license" name="upfile[]"
+                            accept="image/*,application/pdf" required>
+                    </label>
                 </div>
                 <div class="input-group">
-                    <label for="business-license">사업자 등록증</label>
-                    <input type="file" id="business-license" name="business_license" accept="image/*,application/pdf" required>
+                    <label for="store-description">매장 소개
+                        <textarea id="store-description" name="store_memo" rows="5" required></textarea>
+                    </label>
                 </div>
                 <div class="input-group">
-                    <label for="store-description">매장 소개</label>
-                    <textarea id="store-description" name="store_description" rows="4" required></textarea>
-                </div>
-                <div class="input-group">
-                    <label for="store-images">매장 이미지</label>
-                    <input type="file" id="store-images" name="store_images[]" accept="image/*" multiple>
+                    <label for="store-images">매장 이미지
+                        <input type="file" id="store-images" name="upfile[]" accept="image/*" multiple>
+                    </label>
                 </div>
                 <button type="submit" class="submit-btn title">신청하기</button>
             </form>
         </section>
     </main>
 </body>
+
 </html>
