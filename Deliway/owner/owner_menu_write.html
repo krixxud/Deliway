@@ -5,30 +5,49 @@ include "../config/db.php";
 
 <!DOCTYPE html>
 <html lang="ko">
+
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Document</title>
 </head>
+
 <body>
     <h1>메뉴관리</h1>
-    <label for="menu_category">카테고리</label>
-    <select name="menu_category">
-        <option value="">-선택-</option>
-        <?php
+
+    <form action="menu_ok.php" method="post" enctype="multipart/form-data">
+        <input type="hidden" name="user_id" value="<?php echo $_SESSION['user_id'];?>">
+        <label for="menu_category">카테고리</label>
+        <select name="menu_category">
+            <option value="">-선택-</option>
+            <?php
         $sql = "select * from menu_category where cate_userid='".$_SESSION['user_id']."'";
         $result = mysqli_query($con, $sql);
         while ($row = mysqli_fetch_array($result)){
         ?>
-        <option value="<?php echo $row['cate_name'];?>"><?php echo $row['cate_name'];?></option> 
-        <?php
+            <option value="<?php echo $row['cate_name'];?>">
+                <?php echo $row['cate_name'];?>
+            </option>
+            <?php
         }
         ?>
-    </select><br>
-    메뉴명 : <input type="text" name="store_menu_name"><br>
-    메뉴가격 : <input type="number" name="store_menu_cost"><br>
-    메뉴설명 : <input type="text" name="store_menu_memo"><br>
+        </select><br>
+        <label for="">메뉴명
+            <input type="text" name="store_menu_name"><br>
+        </label>
+        <label for="">메뉴가격
+            <input type="number" name="store_menu_cost"><br>
+        </label>
+        <label for="">메뉴설명
+            <input type="text" name="store_menu_memo"><br>
+        </label>
+        <label for="">메뉴사진
+            <input type="file" name="upfile[]"><br>    
+        </label>
 
-    <input type="submit" value="메뉴등록">
+        <input type="submit" value="메뉴등록">
+
+    </form>
 </body>
+
 </html>

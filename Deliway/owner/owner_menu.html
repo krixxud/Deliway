@@ -1,3 +1,8 @@
+<?php
+session_start();
+include "../config/db.php";
+?>
+
 <!DOCTYPE html>
 <html lang="ko">
 <head>
@@ -65,16 +70,28 @@
         <main class="main-content">
             <header class="page-header">
                 <h2 class="page-title">메뉴 관리</h2>
-                <button class="btn btn-primary">
-                    <i class="ri-add-line"></i>
-                    <a href="./menu_category.html">카테고리</a>
-                </button>
-
-                <button class="btn btn-primary">
-                    <i class="ri-add-line"></i>
-                    <a href="./owner_menu_write.html">새 메뉴 추가</a>
-                </button>
+                <button class="btn btn-primary"><i class="ri-add-line"></i><a href="./menu_category.html">카테고리</a></button>
+                <button class="btn btn-primary"><i class="ri-add-line"></i><a href="./owner_menu_write.html">새 메뉴 추가</a></button>
             </header>
+
+            <table>
+                <tr>
+                <?php
+                $sql = "select * from menu where user_id='".$_SESSION['user_id']."'";
+                $result = mysqli_query($con, $sql);
+                while($row = mysqli_fetch_array($result)){
+                ?>
+                    <td>
+                        <img src="../code/upload/<?php echo $row['file_copied_0'];?>" width="150"><br>
+                        <?php echo $row['store_menu_name']?>&nbsp;  <?php echo $row['store_menu_cost']?><br>
+                        <?php echo $row['store_menu_memo']?> <br>
+                        수정 삭제
+                    </td>
+                <?php
+                }
+                ?>    
+                </tr>
+            </table>
         </main>
 </body>
 </html>
