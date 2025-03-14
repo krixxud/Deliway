@@ -15,10 +15,12 @@ body {
     width: 100%;
     max-width: 400px;
     text-align: center;
+    background: #fff;
+    box-shadow: var(--shadow);
 }
 
 h2 {
-    color: var(--primary);
+    color: var(--primary-color);
     font-size: 24px;
     margin-bottom: 40px;
 }
@@ -32,20 +34,20 @@ h2 {
 
 .input-group label {
     margin-bottom: 5px;
-    color: var(--text-grey);
+    color: var(--gray-500);
     font-weight: bold;
 }
 
 .input-group input {
     padding: 10px;
-    border: 1px solid var(--text-grey);
+    border: 1px solid var(--gray-500);
     border-radius: 10px;
     font-size: 16px;
     height: 50px;
 }
 .input-group input:focus {
     outline: none;
-    border: 2px solid var(--primary);
+    border: 2px solid var(--primary-color);
 }
 
 .loginBtn {
@@ -54,7 +56,7 @@ h2 {
     display: flex;
     align-items: center;
     justify-content: center;
-    background-color: var(--primary);
+    background-color: var(--primary-color);
     color: white;
     border: none;
     border-radius: 10px;
@@ -63,7 +65,7 @@ h2 {
 }
 
 .error-message {
-    color: var(--text-grey);
+    color: var(--gray-500);
     font-size: 14px;
     margin-top: 10px;
 }

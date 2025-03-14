@@ -1,0 +1,23 @@
+<?php
+session_start();
+?>
+
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Document</title>
+</head>
+<body>
+    <h1>카테고리 등록</h1>
+
+    <form method="post" action="category.php">
+    <input type="hidden" name="cate_userid" value="<?php echo $_SESSION['user_id'];?>">
+    <label for="category">카테고리 명</label><br>
+    <input type="text" name="cate_name"><br><br>
+
+    <input type="submit" value="등록">
+</form>
+</body>
+</html>

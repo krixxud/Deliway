@@ -1,6 +1,6 @@
 <?php
 session_start();
-include "../config/db.php"
+include "../config/db.php";
 
 $sql = "select * from store where store_idx='".$_GET['store_idx']."'";
 $result = mysqli_query($con,$sql);

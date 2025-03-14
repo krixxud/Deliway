@@ -51,6 +51,12 @@ body {
     background-color: var(--gray-50);
     color: var(--text-color);
 }
+
+td > a {
+    text-decoration: none;
+    color: black;
+}
+
 /* 메인컨텐츠 영역 */
 .main-content {
     margin-left: var(--sidebar-width);

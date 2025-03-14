@@ -1,3 +1,12 @@
+<?php
+session_start();
+include "../config/db.php";
+
+$sql = "select * from store where user_id='".$_SESSION['user_id']."'";
+$result = mysqli_query($con,$sql);
+$row = mysqli_fetch_array($result);
+?>
+
 <!DOCTYPE html>
 <html lang="ko">
 <head>
@@ -25,37 +34,37 @@
         <nav>
             <ul class="nav-menu">
                 <li class="nav-item">
-                    <a href="./owner-dashboard.html" class="active">
+                    <a href="./owner_dashboard.html" class="active">
                         <i class="ri-dashboard-line"></i>
                         대시보드
                     </a>
                 </li>
                 <li class="nav-item">
-                    <a href="./owner-reservation.html">
+                    <a href="./owner_reservation.html">
                         <i class="ri-calendar-line"></i>
                         예약 관리
                     </a>
                 </li>
                 <li class="nav-item">
-                    <a href="./owner-store.html">
+                    <a href="./owner_store.html">
                         <i class="ri-store-line"></i>
                         매장 정보
                     </a>
                 </li>
                 <li class="nav-item">
-                    <a href="./owner-menu.html">
+                    <a href="./owner_menu.html">
                         <i class="ri-restaurant-line"></i>
                         메뉴 관리
                     </a>
                 </li>
                 <li class="nav-item">
-                    <a href="./owner-sales.html">
+                    <a href="./owner_sales.html">
                         <i class="ri-bar-chart-line"></i>
                         매출 통계
                     </a>
                 </li>
                 <li class="nav-item">
-                    <a href="./owner-setting.html">
+                    <a href="./owner_setting.html">
                         <i class="ri-settings-line"></i>
                         설정
                     </a>
@@ -68,7 +77,7 @@
             <div class="store-info">
                 <div class="store-avatar">M</div>
                 <div>
-                    <h1>맛있는 치킨</h1>
+                    <h1><?php echo $row['store_name'];?></h1>
                     <span class="store-status">영업 중</span>
                 </div>
             </div>

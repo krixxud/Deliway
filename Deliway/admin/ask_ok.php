@@ -13,7 +13,7 @@ $store_ing = "승인 대기 중";
 $files = $_FILES["upfile"];
 	$count = count($files["name"]);
 			
-	$upload_dir = '../upload/';
+	$upload_dir = '../code/upload/';
     
     // 다중
 	for ($i=0; $i<$count; $i++)
@@ -88,5 +88,5 @@ mysqli_query($con,$sql);
 
 <script>
     alert("업체신청이 완료되었습니다. 검토 후 승인을 진행하겠습니다.")
-    location.href="../mypage.html"
+    location.href="../code/mypage.html"
 </script>

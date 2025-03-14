@@ -150,7 +150,7 @@ $row_num = mysqli_num_rows($result); //갯수파악 구문
                         <td><?php echo $row1['store_address1']?></td>
                         <td><?php echo $row1['store_call']?></td>
                         <td><?php echo $row1['store_wdate']?></td>
-                        <td><a href="store_ok.html?store_idx = <?php echo $row1['store_idx'];?>"><span class="badge badge-pending"><?php echo $row1['store_ing'];?></span></a></td>
+                        <td><a href="store_ok.html?store_idx=<?php echo $row1['store_idx'];?>&user_id=<?php echo $row1['user_id'];?>"><span class="badge badge-pending"><?php echo $row1['store_ing'];?></span></a></td>
                         <td>
                             <button class="btn btn-primary">수정</button>
                             <button class="btn btn-danger">삭제</button>

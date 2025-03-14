@@ -9,7 +9,7 @@ $user_pass = $_POST['user_pass'];
 $auto_login = $_POST['auto_login'];
 $user_login = date("Y-m-d H:i:s"); //최근로그인기록
 
-$sql = "SELECT * FROM member WHERE user_id = '$user_id'";
+$sql = "SELECT * FROM member WHERE user_id = '".$user_id."'";
 $result = mysqli_query($con, $sql);
 $row = mysqli_fetch_array($result);
 

@@ -1,0 +1,501 @@
+<?php
+session_start();
+include "../config/db.php";
+
+$sql = "select * from store where user_id='".$_SESSION['user_id']."'";
+$result = mysqli_query($con, $sql);
+$row = mysqli_fetch_array($result);
+?>
+
+<!DOCTYPE html>
+<html lang="ko">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="description" content="맛집 파트너 매장 정보 관리">
+    <title>매장 정보 관리</title>
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/remixicon/3.5.0/remixicon.min.css" rel="stylesheet">
+    <link rel="stylesheet" href="./css/owner-common.css">
+    <link rel="stylesheet" href="./css/owner-store.css">
+    <script src="./js/owner-common.js" defer></script>
+
+<body>
+
+    <button class="sidebar-toggle" aria-label="메뉴 열기">
+        <i class="ri-menu-line"></i>
+    </button>
+    <!-- Navigation -->
+    <aside class="sidebar" role="navigation">
+        <div class="sidebar-brand">
+            <div class="brand-logo">
+                <i class="ri-store-2-fill"></i>
+            </div>
+            <h1 class="brand-name">델리웨이</h1>
+        </div>
+        <nav>
+            <ul class="nav-menu">
+                <li class="nav-item">
+                    <a href="./owner_dashboard.html" class="active">
+                        <i class="ri-dashboard-line"></i>
+                        대시보드
+                    </a>
+                </li>
+                <li class="nav-item">
+                    <a href="./owner_reservation.html">
+                        <i class="ri-calendar-line"></i>
+                        예약 관리
+                    </a>
+                </li>
+                <li class="nav-item">
+                    <a href="./owner_store.html">
+                        <i class="ri-store-line"></i>
+                        매장 정보
+                    </a>
+                </li>
+                <li class="nav-item">
+                    <a href="./owner_menu.html">
+                        <i class="ri-restaurant-line"></i>
+                        메뉴 관리
+                    </a>
+                </li>
+                <li class="nav-item">
+                    <a href="./owner_sales.html">
+                        <i class="ri-bar-chart-line"></i>
+                        매출 통계
+                    </a>
+                </li>
+                <li class="nav-item">
+                    <a href="./owner_setting.html">
+                        <i class="ri-settings-line"></i>
+                        설정
+                    </a>
+                </li>
+            </ul>
+        </nav>
+    </aside>
+    <main class="main-content" role="main">
+        <header class="page-header">
+            <h2 class="page-title">매장 정보 관리</h2>
+            <button type="button" class="button button-primary">변경사항 저장</button>
+        </header>
+
+        <form id="storeInfoForm" method="post" action="owner_store.php" enctype="multipart/form-data">
+            <section class="section" aria-labelledby="basic-info-title">
+                <div class="section-header">
+                    <h3 id="basic-info-title" class="section-title">기본 정보</h3>
+                </div>
+
+                <div class="form-group">
+                    <label for="storeName" class="form-label">매장명</label>
+                    <input type="text" id="storeName" class="form-input" name="store_name"
+                        value="<?php echo $row['store_name'];?>" required>
+                </div>
+
+                <div class="form-group">
+                    <label for="storeCatehgory" class="form-label">카테고리</label>
+                    <select name="store_category">
+                        <option value="한식" <?php if ($row['store_category']=='한식' ) { echo "selected" ;} ?>>한식</option>
+                        <option value="일식" <?php if ($row['store_category']=='일식' ) { echo "selected" ;} ?>>일식</option>
+                        <option value="중식" <?php if ($row['store_category']=='중식' ) { echo "selected" ;} ?>>중식</option>
+                        <option value="양식" <?php if ($row['store_category']=='양식' ) { echo "selected" ;} ?>>양식</option>
+                        <option value="카페&디저트" <?php if ($row['store_category']=='카페&디저트' ) { echo "selected" ;} ?>
+                            >카페&디저트</option>
+                        <option value="채식" <?php if ($row['store_category']=='채식' ) { echo "selected" ;} ?>>채식</option>
+                        <option value="뷔페" <?php if ($row['store_category']=='뷔페' ) { echo "selected" ;} ?>>뷔페</option>
+                        <option value="오마카세" <?php if ($row['store_category']=='오마카세' ) { echo "selected" ;} ?>>오마카세
+                        </option>
+                    </select>
+                </div>
+
+                <div class="form-group">
+                    <label for="storeDesc" class="form-label">매장 소개</label>
+                    <textarea id="storeDesc" class="form-textarea"
+                        name="store_memo"><?php echo $row['store_memo'];?></textarea>
+                </div>
+
+                <div class="form-group">
+                    <label for="store-address">매장 주소</label>
+                    <input type="text" id="sample5_address" placeholder="주소 검색" name="store_address1">
+                    <input type="button" onclick="sample5_execDaumPostcode()" value="검색"><br>
+                </div>
+                <div id="map"></div>
+                <script src="//t1.daumcdn.net/mapjsapi/bundle/postcode/prod/postcode.v2.js"></script>
+                <script
+                    src="//dapi.kakao.com/v2/maps/sdk.js?appkey=cf296d5c3ef945628fc8bfd4d32c00a8&libraries=services"></script>
+                <script>
+                    var mapContainer = document.getElementById('map'), // 지도를 표시할 div
+                        mapOption = {
+                            center: new daum.maps.LatLng(37.537187, 127.005476), // 지도의 중심좌표
+                            level: 5 // 지도의 확대 레벨
+                        };
+
+                    //지도를 미리 생성
+                    var map = new daum.maps.Map(mapContainer, mapOption);
+                    //주소-좌표 변환 객체를 생성
+                    var geocoder = new daum.maps.services.Geocoder();
+                    //마커를 미리 생성
+                    var marker = new daum.maps.Marker({
+                        position: new daum.maps.LatLng(37.537187, 127.005476),
+                        map: map
+                    });
+
+
+                    function sample5_execDaumPostcode() {
+                        new daum.Postcode({
+                            oncomplete: function (data) {
+                                var addr = data.address; // 최종 주소 변수
+
+                                // 주소 정보를 해당 필드에 넣는다.
+                                document.getElementById("sample5_address").value = addr;
+                                // 주소로 상세 정보를 검색
+                                geocoder.addressSearch(data.address, function (results, status) {
+                                    // 정상적으로 검색이 완료됐으면
+                                    if (status === daum.maps.services.Status.OK) {
+
+                                        var result = results[0]; //첫번째 결과의 값을 활용
+
+                                        // 해당 주소에 대한 좌표를 받아서
+                                        var coords = new daum.maps.LatLng(result.y, result.x);
+                                        // 지도를 보여준다.
+                                        mapContainer.style.display = "block";
+                                        map.relayout();
+                                        // 지도 중심을 변경한다.
+                                        map.setCenter(coords);
+                                        // 마커를 결과값으로 받은 위치로 옮긴다.
+                                        marker.setPosition(coords)
+                                    }
+                                });
+                            }
+                        }).open();
+                    }
+                </script>
+
+                <div class="form-group">
+                    <label for="storePhone" class="form-label">전화번호</label>
+                    <input type="tel" id="storePhone" class="form-input" name="store_call"
+                        value="<?php echo $row['store_call'];?>">
+                </div>
+
+                <div class="form-group">
+                    <label class="form-label">매장 사진</label>
+                    <div class="image-upload" role="button" tabindex="0">
+                        <?php if ($row['file_name_2'] == "") {
+                        }   else {
+                        ?>
+                        <img src='../code/upload/<?php echo $row[' file_copied_2'];?>' width='100'>
+                        <?php
+                        }
+                        ?>
+                        <input type="file" name="upfile[]"><br>
+                        <?php if ($row['file_name_3'] == "") {
+                        }   else {
+                        ?>
+                        <img src='../code/upload/<?php echo $row[' file_copied_3'];?>' width='100'>
+                        <?php
+                        }
+                        ?>
+                        <input type="file" name="upfile[]"><br>
+                        <?php if ($row['file_name_4'] == "") {
+                        }   else {
+                        ?>
+                        <img src='../code/upload/<?php echo $row[' file_copied_4'];?>' width='100'>
+                        <?php
+                        }
+                        ?>
+                        <input type="file" name="upfile[]"><br>
+                    </div>
+                </div>
+            </section>
+
+            <section class="section" aria-labelledby="hours-title">
+                <div class="section-header">
+                    <h3 id="hours-title" class="section-title">영업 시간</h3>
+                </div>
+
+                <div class="hours-grid">
+                    <div class="form-group">
+                        <label for="weekdayStart" class="form-label">평일</label>
+                        <select id="weekdayStart" class="form-select" name="store_weekday1">
+                            <option value="">-선택-</option>
+                            <option value="06:00" <?php if ($row['store_weekday1']=='06:00' ) { echo "selected" ;} ?>
+                                >06:00</option>
+                            <option value="07:00" <?php if ($row['store_weekday1']=='07:00' ) { echo "selected" ;} ?>
+                                >07:00</option>
+                            <option value="08:00" <?php if ($row['store_weekday1']=='08:00' ) { echo "selected" ;} ?>
+                                >08:00</option>
+                            <option value="09:00" <?php if ($row['store_weekday1']=='09:00' ) { echo "selected" ;} ?>
+                                >09:00</option>
+                            <option value="10:00" <?php if ($row['store_weekday1']=='10:00' ) { echo "selected" ;} ?>
+                                >10:00</option>
+                            <option value="11:00" <?php if ($row['store_weekday1']=='11:00' ) { echo "selected" ;} ?>
+                                >11:00</option>
+                            <option value="12:00" <?php if ($row['store_weekday1']=='12:00' ) { echo "selected" ;} ?>
+                                >12:00</option>
+                            <option value="13:00" <?php if ($row['store_weekday1']=='13:00' ) { echo "selected" ;} ?>
+                                >13:00</option>
+                            <option value="14:00" <?php if ($row['store_weekday1']=='14:00' ) { echo "selected" ;} ?>
+                                >14:00</option>
+                            <option value="15:00" <?php if ($row['store_weekday1']=='15:00' ) { echo "selected" ;} ?>
+                                >15:00</option>
+                            <option value="16:00" <?php if ($row['store_weekday1']=='16:00' ) { echo "selected" ;} ?>
+                                >16:00</option>
+                            <option value="17:00" <?php if ($row['store_weekday1']=='17:00' ) { echo "selected" ;} ?>
+                                >17:00</option>
+                            <option value="18:00" <?php if ($row['store_weekday1']=='18:00' ) { echo "selected" ;} ?>
+                                >18:00</option>
+                            <option value="19:00" <?php if ($row['store_weekday1']=='19:00' ) { echo "selected" ;} ?>
+                                >19:00</option>
+                            <option value="20:00" <?php if ($row['store_weekday1']=='20:00' ) { echo "selected" ;} ?>
+                                >20:00</option>
+                        </select>
+                        ~
+                        <select id="weekdayEnd" class="form-select" name="store_weekday2">
+                            <option value="">-선택-</option>
+                            <option value="17:00" <?php if ($row['store_weekday2']=='17:00' ) { echo "selected" ;} ?>
+                                >17:00</option>
+                            <option value="18:00" <?php if ($row['store_weekday2']=='18:00' ) { echo "selected" ;} ?>
+                                >18:00</option>
+                            <option value="19:00" <?php if ($row['store_weekday2']=='19:00' ) { echo "selected" ;} ?>
+                                >19:00</option>
+                            <option value="20:00" <?php if ($row['store_weekday2']=='20:00' ) { echo "selected" ;} ?>
+                                >20:00</option>
+                            <option value="21:00" <?php if ($row['store_weekday2']=='21:00' ) { echo "selected" ;} ?>
+                                >21:00</option>
+                            <option value="22:00" <?php if ($row['store_weekday2']=='22:00' ) { echo "selected" ;} ?>
+                                >22:00</option>
+                            <option value="23:00" <?php if ($row['store_weekday2']=='23:00' ) { echo "selected" ;} ?>
+                                >23:00</option>
+                            <option value="24:00" <?php if ($row['store_weekday2']=='24:00' ) { echo "selected" ;} ?>
+                                >24:00</option>
+                            <option value="01:00" <?php if ($row['store_weekday2']=='01:00' ) { echo "selected" ;} ?>
+                                >01:00</option>
+                            <option value="02:00" <?php if ($row['store_weekday2']=='02:00' ) { echo "selected" ;} ?>
+                                >02:00</option>
+                            <option value="03:00" <?php if ($row['store_weekday2']=='03:00' ) { echo "selected" ;} ?>
+                                >03:00</option>
+                        </select>
+                    </div>
+
+                    <div class="form-group">
+                        <label for="weekendStart" class="form-label">주말</label>
+                        <select id="weekdayStart" class="form-select" name="store_weekend1">
+                            <option value="">-선택-</option>
+                            <option value="06:00" <?php if ($row['store_weekend1']=='06:00' ) { echo "selected" ;} ?>
+                                >06:00</option>
+                            <option value="07:00" <?php if ($row['store_weekend1']=='07:00' ) { echo "selected" ;} ?>
+                                >07:00</option>
+                            <option value="08:00" <?php if ($row['store_weekend1']=='08:00' ) { echo "selected" ;} ?>
+                                >08:00</option>
+                            <option value="09:00" <?php if ($row['store_weekend1']=='09:00' ) { echo "selected" ;} ?>
+                                >09:00</option>
+                            <option value="10:00" <?php if ($row['store_weekend1']=='10:00' ) { echo "selected" ;} ?>
+                                >10:00</option>
+                            <option value="11:00" <?php if ($row['store_weekend1']=='11:00' ) { echo "selected" ;} ?>
+                                >11:00</option>
+                            <option value="12:00" <?php if ($row['store_weekend1']=='12:00' ) { echo "selected" ;} ?>
+                                >12:00</option>
+                            <option value="13:00" <?php if ($row['store_weekend1']=='13:00' ) { echo "selected" ;} ?>
+                                >13:00</option>
+                            <option value="14:00" <?php if ($row['store_weekend1']=='14:00' ) { echo "selected" ;} ?>
+                                >14:00</option>
+                            <option value="15:00" <?php if ($row['store_weekend1']=='15:00' ) { echo "selected" ;} ?>
+                                >15:00</option>
+                            <option value="16:00" <?php if ($row['store_weekend1']=='16:00' ) { echo "selected" ;} ?>
+                                >16:00</option>
+                            <option value="17:00" <?php if ($row['store_weekend1']=='17:00' ) { echo "selected" ;} ?>
+                                >17:00</option>
+                            <option value="18:00" <?php if ($row['store_weekend1']=='18:00' ) { echo "selected" ;} ?>
+                                >18:00</option>
+                            <option value="19:00" <?php if ($row['store_weekend1']=='19:00' ) { echo "selected" ;} ?>
+                                >19:00</option>
+                            <option value="20:00" <?php if ($row['store_weekend1']=='20:00' ) { echo "selected" ;} ?>
+                                >20:00</option>
+                        </select>
+                        ~
+                        <select id="weekdayEnd" class="form-select" name="store_weekend2">
+                            <option value="">-선택-</option>
+                            <option value="17:00" <?php if ($row['store_weekend2']=='17:00' ) { echo "selected" ;} ?>
+                                >17:00</option>
+                            <option value="18:00" <?php if ($row['store_weekend2']=='18:00' ) { echo "selected" ;} ?>
+                                >18:00</option>
+                            <option value="19:00" <?php if ($row['store_weekend2']=='19:00' ) { echo "selected" ;} ?>
+                                >19:00</option>
+                            <option value="20:00" <?php if ($row['store_weekend2']=='20:00' ) { echo "selected" ;} ?>
+                                >20:00</option>
+                            <option value="21:00" <?php if ($row['store_weekend2']=='21:00' ) { echo "selected" ;} ?>
+                                >21:00</option>
+                            <option value="22:00" <?php if ($row['store_weekend2']=='22:00' ) { echo "selected" ;} ?>
+                                >22:00</option>
+                            <option value="23:00" <?php if ($row['store_weekend2']=='23:00' ) { echo "selected" ;} ?>
+                                >23:00</option>
+                            <option value="24:00" <?php if ($row['store_weekend2']=='24:00' ) { echo "selected" ;} ?>
+                                >24:00</option>
+                            <option value="01:00" <?php if ($row['store_weekend2']=='01:00' ) { echo "selected" ;} ?>
+                                >01:00</option>
+                            <option value="02:00" <?php if ($row['store_weekend2']=='02:00' ) { echo "selected" ;} ?>
+                                >02:00</option>
+                            <option value="03:00" <?php if ($row['store_weekend2']=='03:00' ) { echo "selected" ;} ?>
+                                >03:00</option>
+                        </select>
+                    </div>
+
+                    <div class="form-group">
+                        <label for="breakTime" class="form-label">브레이크타임</label>
+                        <select id="breakTime" class="form-select" name="store_breaktime">
+                            <option value="">-선택-</option>
+                            <option value="no" <?php if ($row['store_breaktime']=='no' ) { echo "selected" ;} ?>>브레이크타임
+                                없음</option>
+                            <option value="15:00 ~ 17:00" <?php if ($row['store_breaktime']=='15:00 ~ 17:00' ) {
+                                echo "selected" ;} ?>>15:00 ~ 17:00</option>
+                            <option value="17:00 ~ 19:00" <?php if ($row['store_breaktime']=='17:00 ~ 19:00' ) {
+                                echo "selected" ;} ?>>17:00 ~ 19:00</option>
+                        </select>
+                    </div>
+                </div>
+            </section>
+
+            <section class="section" aria-labelledby="services-title">
+                <div class="section-header">
+                    <h3 id="services-title" class="section-title">서비스 설정</h3>
+                </div>
+                <div class="form-group">
+                    <label class="form-label">예약 서비스</label>
+                    <label class="toggle-switch">
+                        <label class="toggle-switch">
+                            <input type="checkbox" name="store_service" value="1" checked <?php if
+                                ($row['store_service']=='1' ) { echo "checked" ;} ?>>
+                            <span class="toggle-slider"></span>
+                        </label>
+                        <p class="form-description">예약 기능을 활성화하면 손님들이 온라인으로 예약할 수 있습니다.</p>
+                </div>
+
+                <div class="form-group">
+                    <label class="form-label">예약 가능 인원</label>
+                    <div class="form-inline">
+                        <input type="number" name="store_reser1" class="form-input" min="2"
+                            value="<?php echo $row['store_reser1'];?>"> 명 ~
+                        <input type="number" name="store_reser2" class="form-input" max="20"
+                            value="<?php echo $row['store_reser2'];?>"> 명
+                    </div>
+                </div>
+
+                <div class="form-group">
+                    <label class="form-label">픽업 서비스</label>
+                    <label class="toggle-switch">
+                        <input type="checkbox" name="store_pickup" value="1" checked <?php if ($row['store_pickup']=='1'
+                            ) { echo "checked" ;} ?>>
+                        <span class="toggle-slider"></span>
+                    </label>
+                    <p class="form-description">픽업 서비스를 제공하면 손님을 지정된 장소에서 픽업할 수 있습니다.</p>
+                </div>
+
+                <div class="form-group">
+                    <label class="form-label">픽업 가능 거리</label>
+                    <select class="form-select" name="store_pickup1">
+                        <option value="">-선택-</option>
+                        <option value="1km 이내" <?php if ($row['store_pickup1']=='1km 이내' ) { echo "selected" ;} ?>>1km
+                            이내</option>
+                        <option value="3km 이내" <?php if ($row['store_pickup1']=='3km 이내' ) { echo "selected" ;} ?>>3km
+                            이내</option>
+                        <option value="5km 이내" <?php if ($row['store_pickup1']=='5km 이내' ) { echo "selected" ;} ?>>5km
+                            이내</option>
+                    </select>
+                </div>
+            </section>
+
+            <section class="section" aria-labelledby="facility-title">
+                <div class="section-header">
+                    <h3 id="facility-title" class="section-title">시설 정보</h3>
+                </div>
+
+                <div class="facilities-grid">
+                    <div class="facility-item">
+                        <label class="checkbox-label">
+                            <input type="checkbox" name="store_option1" value="1" checked <?php if
+                                ($row['store_option1']=='1' ) { echo "checked" ;} ?>>
+                            <span>주차 가능</span>
+                        </label>
+                        <input type="text" name="store_option1_memo" class="form-input" placeholder="주차 정보 입력"
+                            value="<?php echo $row['store_option1_memo'];?>">
+                    </div>
+
+                    <div class="facility-item">
+                        <label class="checkbox-label">
+                            <input type="checkbox" name="store_option2" value="1" checked <?php if
+                                ($row['store_option2']=='1' ) { echo "checked" ;} ?>>
+                            <span>화장실</span>
+                        </label>
+                    </div>
+
+                    <div class="facility-item">
+                        <label class="checkbox-label">
+                            <input type="checkbox" name="store_option3" value="1" checked <?php if
+                                ($row['store_option3']=='1' ) { echo "checked" ;} ?>>
+                            <span>무선 인터넷</span>
+                        </label>
+                    </div>
+
+                    <div class="facility-item">
+                        <label class="checkbox-label">
+                            <input type="checkbox" name="store_option4" value="1" <?php if ($row['store_option4']=='1' )
+                                { echo "checked" ;} ?>>
+                            <span>단체석</span>
+                        </label>
+                        <input type="text" class="form-input" name="store_option4_memo" placeholder="수용 가능 인원"
+                            value="<?php echo $row['store_option4_memo'];?>">
+                    </div>
+                </div>
+            </section>
+
+            <section class="section" aria-labelledby="notice-title">
+                <div class="section-header">
+                    <h3 id="notice-title" class="section-title">공지사항</h3>
+                    <button type="button" class="button button-outline">공지 추가</button>
+                </div>
+
+                <div class="notice-list">
+                    <article class="notice-item">
+                        <header class="notice-header">
+                            <h4>신메뉴 출시 안내</h4>
+                            <div class="notice-actions">
+                                <button type="button" class="button button-outline">수정</button>
+                                <button type="button" class="button button-outline">삭제</button>
+                            </div>
+                        </header>
+                        <p class="notice-content">3월 1일부터 신메뉴 '트러플 치킨'이 출시됩니다.</p>
+                        <footer class="notice-footer">
+                            <time datetime="2024-02-23">2024.02.23</time>
+                        </footer>
+                    </article>
+                </div>
+            </section>
+
+            <section class="section" aria-labelledby="keywords-title">
+                <div class="section-header">
+                    <h3 id="keywords-title" class="section-title">검색 키워드</h3>
+                </div>
+
+                <div class="form-group">
+                    <label class="form-label">키워드 입력</label>
+                    <div class="keywords-input">
+                        <input type="text" class="form-input" placeholder="키워드를 입력하세요" name="store_keyword1"
+                            value="<?php echo $row['store_keyword1'];?>">
+                        <input type="text" class="form-input" placeholder="키워드를 입력하세요" name="store_keyword2"
+                            value="<?php echo $row['store_keyword2'];?>">
+                        <input type="text" class="form-input" placeholder="키워드를 입력하세요" name="store_keyword3"
+                            value="<?php echo $row['store_keyword3'];?>">
+                        <button type="button" class="button button-outline">추가</button>
+                    </div>
+                </div>
+            </section>
+
+            <div class="form-actions">
+                <button type="submit" class="button button-primary">변경사항 저장</button>
+                <button type="button" class="button button-outline">취소</button>
+            </div>
+        </form>
+    </main>
+</body>
+
+</html>

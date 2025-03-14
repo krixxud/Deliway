@@ -14,6 +14,7 @@ include "../config/db.php";
     <h1>업체 승인</h1>
     <form action="store_ok.php" method="post">
         <input type="hidden" name="store_idx" value="<?php echo $_GET['store_idx'];?>">
+        <input type="hidden" name="user_id" value="<?php echo $_GET['user_id'];?>">
         <input type="radio" name="store_ing" value="승인">승인&nbsp;
         <input type="radio" name="store_ing" value="반려">반려<br><br>
 
