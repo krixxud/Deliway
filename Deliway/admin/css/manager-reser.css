@@ -1,5 +1,4 @@
 @charset "utf-8";
-@charset "utf-8";
 
 /* 검색 섹션 */
 .search-section {
@@ -43,7 +42,7 @@
     box-shadow: var(--shadow-sm);
 }
 
-/* 리뷰 통계 카드 */
+/* 예약 통계 카드 */
 .stat-cards {
     display: grid;
     grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
@@ -70,8 +69,8 @@
     font-weight: bold;
 }
 
-/* 리뷰 목록 */
-.review-list {
+/* 예약 목록 */
+.reservation-list {
     background-color: white;
     padding: 20px;
     border-radius: var(--border-radius);
@@ -91,47 +90,47 @@
     color: var(--text-dark);
 }
 
-/* 리뷰 테이블 */
-.review-table-container {
+/* 예약 테이블 */
+.reservation-table-container {
     overflow-x: auto;
     margin-bottom: 20px;
 }
 
-.review-list-table {
+.reservation-list-table {
     width: 100%;
     border-collapse: collapse;
     margin-bottom: 20px;
 }
 
-.review-list-table th,
-.review-list-table td {
+.reservation-list-table th,
+.reservation-list-table td {
     padding: 12px;
     text-align: left;
     border-bottom: 1px solid var(--gray-200);
 }
 
-.review-list-table th {
+.reservation-list-table th {
     background-color: var(--gray-50);
     font-weight: 600;
     color: var(--text-dark);
 }
 
-.review-list-table td {
+.reservation-list-table td {
     color: var(--text-color);
 }
 
-.review-list-table tr:hover {
+.reservation-list-table tr:hover {
     background-color: var(--gray-50);
 }
 
-.review-content {
+.reservation-content {
     max-width: 300px;
     overflow: hidden;
     text-overflow: ellipsis;
     white-space: nowrap;
 }
 
-.review-actions {
+.reservation-actions {
     display: flex;
     gap: 8px;
 }
@@ -215,20 +214,20 @@
     color: var(--gray-500);
 }
 
-.review-content-detail {
+.reservation-content-detail {
     margin: 10px 0;
     line-height: 1.6;
     white-space: pre-wrap;
 }
 
-.review-images-preview {
+.reservation-images-preview {
     display: flex;
     gap: 10px;
     margin-top: 10px;
     flex-wrap: wrap;
 }
 
-.review-images-preview img {
+.reservation-images-preview img {
     width: 120px;
     height: 120px;
     object-fit: cover;
@@ -260,12 +259,12 @@
         grid-template-columns: 1fr;
     }
     
-    .review-actions {
+    .reservation-actions {
         flex-direction: column;
     }
     
-    .review-list-table th:nth-child(3),
-    .review-list-table td:nth-child(3) {
+    .reservation-list-table th:nth-child(3),
+    .reservation-list-table td:nth-child(3) {
         display: none;
     }
     

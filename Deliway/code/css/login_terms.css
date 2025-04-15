@@ -28,6 +28,7 @@ h2 {
 label{
     display: flex;
     padding: 20px 25px;
+    align-items: center;
 }
 #agree{
     border-radius: 10px;
@@ -35,6 +36,7 @@ label{
 }
 span{
     padding-left: 10px;
+    padding-bottom: 2px;
 }
 
 label span{
@@ -46,7 +48,6 @@ label span{
 }
 
 input[type="checkbox"] {
-    appearance: none;
     -webkit-appearance: none;
     width: 20px;
     height: 20px;

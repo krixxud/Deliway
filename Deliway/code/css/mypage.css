@@ -91,13 +91,15 @@
 
 .store-registration {
     display: block;
-    margin: 15px 25px;
+    margin: 30px 25px 50px;
     text-align: center;
-    width: 100%;
     line-height: 50px;
-    color: var(--white);
     background: var(--primary);
     border-radius: 10px;
+}
+
+.store-registration > a {
+    color: var(--white);
 }
 
 /* 나의 메뉴 섹션 */

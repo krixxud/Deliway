@@ -1,3 +1,18 @@
+<?php
+session_start();
+include "../config/db.php";
+
+$reser_idx = $_GET['reser_idx'];
+$sql = "select * from reser where reser_idx='".$reser_idx."'";
+$result = mysqli_query($con, $sql);
+$row = mysqli_fetch_array($result);
+
+$sql1 = "select * from store where store_idx='".$row['store_idx']."'"; 
+$result1 = mysqli_query($con, $sql1);
+$row1 = mysqli_fetch_array($result1);
+
+?>
+
 <!DOCTYPE html>
 <html lang="ko">
 
@@ -36,13 +51,13 @@
       <div class="swiper mySwiper">
         <div class="swiper-wrapper">
           <div class="swiper-slide">
-            <img src="../images/pexels-can-i-gdeli-624966221-30748532.jpg" alt="main-slider1">
+            <img src="./upload/<?php echo $row1['file_copied_2'];?>">
           </div>
           <div class="swiper-slide">
-            <img src="../images/pexels-yunus-kilic-55235055-30722200.jpg" alt="main-slider2">
+            <img src="./upload/<?php echo $row1['file_copied_3'];?>">
           </div>
           <div class="swiper-slide">
-            <img src="../images/pexels-othmane-ettalbi-2148497459-30374243.jpg" alt="main-slider3">
+            <img src="./upload/<?php echo $row1['file_copied_4'];?>">
           </div>
         </div>
         <div class="swiper-pagination"></div>
@@ -63,15 +78,30 @@
   </header>
 
   <main>
+    <?php 
+    $sql2 = "select count(*) as cnt from review where store_idx='".$row['store_idx']."'"; // 해당 레코드의 갯수를 파악하는 구문
+    $result2 = mysqli_query($con, $sql2);
+    $row2 = mysqli_fetch_array($result2);
+
+    $sql3 = "select sum(review_score) as ts from review where store_idx='".$row['store_idx']."'"; // 해당 필드의 합
+    $result3 = mysqli_query($con, $sql3);
+    $row3 = mysqli_fetch_array($result3);
+
+    if ($row2['cnt'] !=0) {
+      $total_score = $row3['ts']/$row2['cnt'];
+    } else {
+      $total_score = 0;
+    }
+    ?>
     <section class="title-section">
-      <h2 class="title">메타몽은 메타버스에서</h2>
+      <h2 class="title"><?php echo $row1['store_name'];?></h2>
       <dl>
         <dt>
           <img class="rating" src="../icon/star.png" alt="평점"><span class="hidden">평점</span>
         </dt>
-        <dd>1.4</dd>
+        <dd><?php echo round($total_score,1);?></dd>
         <dt>리뷰</dt>
-        <dd>1,000</dd>
+        <dd><?php echo number_format($row2['cnt']);?></dd>
         <!-- 매장 상세페이지(store_detail)로 이동 -->
         <a href="#">상세보기</a>
       </dl>
@@ -83,34 +113,74 @@
         <dt>
           <img src="../icon/reservation.png" alt=""><span>예약일시</span>
         </dt>
-        <dd>2025.03.04 14:30</dd>
+        <dd><?php
+          $reser_day = date("Y.m.d · H:i", strtotime($row['reser_day']));
+          echo $reser_day;
+          ?></dd>
         <dt>
           <img src="../icon/user.png" alt=""><span>예약자</span>
         </dt>
-        <dd>예약자 이름 나타나는 영역</dd>
+        <dd><?php echo $row['reser_name'];?></dd>
         <dt>
           <img src="../icon/people.png" alt=""><span>예약인원</span>
         </dt>
-        <dd>101명</dd>
+        <dd><?php echo $row['reser_number'];?></dd>
         <dt>
           <i class="fa-solid fa-pen-to-square"></i><span>요청사항</span>
         </dt>
-        <dd>비건세트에서 채소 빼고 주세요</dd>
+        <dd><?php echo $row['reser_memo'];?></dd>
       </dl>
     </section>
     <!-- 오시는 길 -->
     <section class="map-section">
       <h2 class="title">오시는 길</h2>
-      <div class="map">
-        <iframe
-          src="https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d3165.3350067188517!2d127.03155294984232!3d37.50001615612253!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x357ca3fe3854fd13%3A0xdbb2d70b1648d2ce!2z6rWs6riA7L2U66as7JWEIOuzuOyCrA!5e0!3m2!1sko!2skr!4v1740631602548!5m2!1sko!2skr"
-          width="600" height="450" style="border: 0" allowfullscreen="" loading="lazy"
-          referrerpolicy="no-referrer-when-downgrade"></iframe>
-      </div>
+      <div id="map" style="width:100%; height:250px; margin: 20px 0 10px; border-radius: 10px;"></div>
+
+        <script type="text/javascript"
+          src="//dapi.kakao.com/v2/maps/sdk.js?appkey=455d961c1f12d1c88656c0214f20de9f&libraries=services"></script>
+        <script>
+          var mapContainer = document.getElementById('map'), // 지도를 표시할 div 
+            mapOption = {
+              center: new kakao.maps.LatLng(33.450701, 126.570667), // 지도의 중심좌표
+              level: 3 // 지도의 확대 레벨
+            };
+
+          // 지도를 생성합니다    
+          var map = new kakao.maps.Map(mapContainer, mapOption);
+
+          // 주소-좌표 변환 객체를 생성합니다
+          var geocoder = new kakao.maps.services.Geocoder();
+
+          // 주소로 좌표를 검색합니다
+          geocoder.addressSearch('<?php echo $row1['store_address1']?>', function (result, status) {
+
+            // 정상적으로 검색이 완료됐으면 
+            if (status === kakao.maps.services.Status.OK) {
+
+              var coords = new kakao.maps.LatLng(result[0].y, result[0].x);
+
+              // 결과값으로 받은 위치를 마커로 표시합니다
+              var marker = new kakao.maps.Marker({
+                map: map,
+                position: coords
+              });
+
+              // 인포윈도우로 장소에 대한 설명을 표시합니다
+              var infowindow = new kakao.maps.InfoWindow({
+                content: '<div style="width:150px;text-align:center;padding:6px 0;"><?php echo $row1['store_name'];?></div>'
+              });
+              infowindow.open(map, marker);
+
+              // 지도의 중심을 결과값으로 받은 위치로 이동시킵니다
+              map.setCenter(coords);
+            }
+          });    
+        </script>
+                  
       <div class="store-location">
         <div class="location-text">
           <div class="gps"></div>
-          <p>가게의 위치가 나오는 영영</p>
+          <p><?php echo $row1['store_address1'];?></p>
         </div>
         <button>
           <i class="fa-regular fa-copy"><span class="hidden">복사</span></i>

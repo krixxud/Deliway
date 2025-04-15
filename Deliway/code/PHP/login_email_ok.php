@@ -20,11 +20,13 @@ if (password_verify($user_pass,$hash_pass)) {
     
     if ($auto_login == 1) {
         setcookie("user_id", $row['user_id'], (time() + 3600 * 24 * 30000), "/" );
+        setcookie("user_idx", $row['user_idx'], (time() + 3600 * 24 * 30000), "/" );
         setcookie("user_name", $row['user_name'], (time() + 3600 * 24 * 30000), "/" );
         setcookie("user_ing", $row['user_ing'], (time() + 3600 * 24 * 30000), "/" );
         
     } else {
         setcookie("user_id", $row['user_id'], time() + 3600, "/" );
+        setcookie("user_idx", $row['user_idx'], time() + 3600, "/" );
         setcookie("user_name", $row['user_name'], time() + 3600, "/" );
         setcookie("user_ing", $row['user_ing'], time() + 3600, "/" );
     }

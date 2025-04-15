@@ -71,6 +71,12 @@ $row = mysqli_fetch_array($result);
                         설정
                     </a>
                 </li>
+                <li class="nav-item">
+                    <a href="./logout.php">
+                        <i class="ri-logout-box-r-line"></i>
+                        로그아웃
+                    </a>
+                </li>
             </ul>
         </nav>
     </aside>
@@ -80,6 +86,11 @@ $row = mysqli_fetch_array($result);
         </header>
 
         <form id="storeInfoForm" method="post" action="owner_store.php" enctype="multipart/form-data">
+            <input type="hidden" name="user_id" value="<?php echo $_SESSION['user_id'];?>">
+            <input type="hidden" name="user_idx" value="<?php echo $_SESSION['user_idx'];?>">
+            <input type="hidden" name="store_idx" value="<?php echo $row['store_idx'];?>">
+            <input type="hidden" name="mode" value="modify">
+
             <section class="section" aria-labelledby="basic-info-title">
                 <div class="section-header">
                     <h3 id="basic-info-title" class="section-title">기본 정보</h3>
@@ -98,12 +109,10 @@ $row = mysqli_fetch_array($result);
                         <option value="일식" <?php if ($row['store_category']=='일식' ) { echo "selected" ;} ?>>일식</option>
                         <option value="중식" <?php if ($row['store_category']=='중식' ) { echo "selected" ;} ?>>중식</option>
                         <option value="양식" <?php if ($row['store_category']=='양식' ) { echo "selected" ;} ?>>양식</option>
-                        <option value="카페&디저트" <?php if ($row['store_category']=='카페&디저트' ) { echo "selected" ;} ?>
-                            >카페&디저트</option>
+                        <option value="카페&디저트" <?php if ($row['store_category']=='카페&디저트' ) { echo "selected" ;} ?>>카페&디저트</option>
                         <option value="채식" <?php if ($row['store_category']=='채식' ) { echo "selected" ;} ?>>채식</option>
                         <option value="뷔페" <?php if ($row['store_category']=='뷔페' ) { echo "selected" ;} ?>>뷔페</option>
-                        <option value="오마카세" <?php if ($row['store_category']=='오마카세' ) { echo "selected" ;} ?>>오마카세
-                        </option>
+                        <option value="오마카세" <?php if ($row['store_category']=='오마카세' ) { echo "selected" ;} ?>>오마카세</option>
                     </select>
                 </div>
 
@@ -117,11 +126,13 @@ $row = mysqli_fetch_array($result);
                     <label for="store-address">매장 주소</label>
                     <input type="text" id="sample5_address" placeholder="주소 검색" name="store_address1">
                     <input type="button" onclick="sample5_execDaumPostcode()" value="검색"><br>
+                    <input type="text" name="find_lat" id="find_lat" placeholder="위도" value="<?php echo $row['store_lat'];?>">
+                    <input type="text" name="find_lng" id="find_lng" placeholder="경도" value="<?php echo $row['store_lag'];?>">
                 </div>
-                <div id="map"></div>
+                <div id="map" style="width:100%;height:350px;"></div>
                 <script src="//t1.daumcdn.net/mapjsapi/bundle/postcode/prod/postcode.v2.js"></script>
                 <script
-                    src="//dapi.kakao.com/v2/maps/sdk.js?appkey=cf296d5c3ef945628fc8bfd4d32c00a8&libraries=services"></script>
+                    src="//dapi.kakao.com/v2/maps/sdk.js?appkey=455d961c1f12d1c88656c0214f20de9f&libraries=services"></script>
                 <script>
                     var mapContainer = document.getElementById('map'), // 지도를 표시할 div
                         mapOption = {
@@ -156,6 +167,10 @@ $row = mysqli_fetch_array($result);
 
                                         // 해당 주소에 대한 좌표를 받아서
                                         var coords = new daum.maps.LatLng(result.y, result.x);
+
+                                        document.getElementById("find_lat").value = result.y;
+                                        document.getElementById("find_lng").value = result.x;
+                                        
                                         // 지도를 보여준다.
                                         mapContainer.style.display = "block";
                                         map.relayout();
@@ -182,7 +197,8 @@ $row = mysqli_fetch_array($result);
                         <?php if ($row['file_name_2'] == "") {
                         }   else {
                         ?>
-                        <img src='../code/upload/<?php echo $row[' file_copied_2'];?>' width='100'>
+                        <img src='../code/upload/<?php echo $row['file_copied_2'];?>' width='100'> 
+                        <input type="checkbox" name="del_file[]" value="0"> 삭제
                         <?php
                         }
                         ?>
@@ -190,7 +206,8 @@ $row = mysqli_fetch_array($result);
                         <?php if ($row['file_name_3'] == "") {
                         }   else {
                         ?>
-                        <img src='../code/upload/<?php echo $row[' file_copied_3'];?>' width='100'>
+                        <img src='../code/upload/<?php echo $row['file_copied_3'];?>' width='100'>
+                        <input type="checkbox" name="del_file[]" value="1"> 삭제
                         <?php
                         }
                         ?>
@@ -198,11 +215,12 @@ $row = mysqli_fetch_array($result);
                         <?php if ($row['file_name_4'] == "") {
                         }   else {
                         ?>
-                        <img src='../code/upload/<?php echo $row[' file_copied_4'];?>' width='100'>
+                        <img src='../code/upload/<?php echo $row['file_copied_4'];?>' width='100'>
+                        <input type="checkbox" name="del_file[]" value="2"> 삭제
                         <?php
                         }
                         ?>
-                        <input type="file" name="upfile[]"><br>
+                        <input type="file" name="upfile[]">
                     </div>
                 </div>
             </section>

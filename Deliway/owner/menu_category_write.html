@@ -1,5 +1,10 @@
 <?php
 session_start();
+include "../config/db.php";
+
+$sql = "select * from store where user_id='".$_SESSION['user_id']."'";
+$result = mysqli_query($con, $sql);
+$row = mysqli_fetch_array($result);
 ?>
 
 <!DOCTYPE html>
@@ -14,6 +19,8 @@ session_start();
 
     <form method="post" action="category.php">
     <input type="hidden" name="cate_userid" value="<?php echo $_SESSION['user_id'];?>">
+    <input type="hidden" name="user_idx" value="<?php echo $_SESSION['user_idx'];?>">
+    <input type="hidden" name="store_idx" value="<?php echo $row['store_idx'];?>">
     <label for="category">카테고리 명</label><br>
     <input type="text" name="cate_name"><br><br>
 

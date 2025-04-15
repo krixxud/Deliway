@@ -3,6 +3,7 @@ session_start();
 include "../config/db.php"; 
 
 $user_id = $_POST['user_id'];
+$store_idx = $_POST['store_idx'];
 $menu_category = $_POST['menu_category'];
 $store_menu_name = $_POST['store_menu_name'];
 $store_menu_cost = $_POST['store_menu_cost'];
@@ -77,8 +78,8 @@ $files = $_FILES["upfile"];
 		}
 	}
 
-$sql = "INSERT INTO menu (user_id, menu_category, store_menu_name, store_menu_cost, store_menu_memo, file_name_0, file_copied_0)
-                    VALUES ('".$user_id."', '".$menu_category."', '".$store_menu_name."', '".$store_menu_cost."', '".$store_menu_memo."', '".$upfile_name[0]."', '".$copied_file_name[0]."')";
+$sql = "INSERT INTO menu (user_id, store_idx, menu_category, store_menu_name, store_menu_cost, store_menu_memo, file_name_0, file_copied_0)
+                    VALUES ('".$user_id."', '".$store_idx."', '".$menu_category."', '".$store_menu_name."', '".$store_menu_cost."', '".$store_menu_memo."', '".$upfile_name[0]."', '".$copied_file_name[0]."')";
 
 mysqli_query($con, $sql);
 ?>

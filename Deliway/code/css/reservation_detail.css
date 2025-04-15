@@ -44,7 +44,7 @@ label {
     display: flex;
     align-items: center;
     gap: 10px;
-    margin-top: 10px;
+    margin-top: 20px;
 }
 
 label img {
@@ -55,9 +55,19 @@ label img {
 
 .dateAndTime {
     display: flex;
-    align-items: center;
+    align-items: start;
+    flex-direction: column;
+}
+
+.datetimePicker {
+    margin: 0;
+}
+
+.date_row {
+    width: 100%;
+    display: flex;
     justify-content: space-between;
-    gap: 10px;
+    align-items: center;
 }
 
 input {
@@ -154,7 +164,6 @@ textarea {
     border: 2px solid var(--primary);
     border-radius: 20px;
     cursor: pointer;
-    margin-top: 5px;
 }
 
 .flatpickr-time-separator:nth-of-type(2),
@@ -201,6 +210,24 @@ textarea {
     /* 클릭 시 글자 색상 */
 }
 
+#reservationModal {
+    display: none;
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background-color: rgba(0, 0, 0, 0.5);
+}
+
+#reservationModal .modal-content {
+    position: relative;
+    width: 300px;
+    margin: 100px auto;
+    padding: 20px;
+    background: white;
+    border-radius: 8px;
+}
 
 #do-reser ul {
     position: fixed;
@@ -217,8 +244,6 @@ textarea {
     padding: 25px;
   }
   
-  
-  
   #do-reser ul li{
     padding: 0.3em;
     width: 100%;
@@ -227,7 +252,6 @@ textarea {
     transition: 0.2s;
     border :2px solid var(--primary);
   }
-  
   
   #do-reser ul li:nth-last-of-type(1){
     background-color: var(--primary);
@@ -248,7 +272,6 @@ textarea {
   #do-reser ul li:first-child:active{
     background-color: var(--primary-light);
   }
-  
   
   #do-reser ul li:nth-of-type(2) button{
     background-color : var(--primary);
@@ -275,9 +298,7 @@ textarea {
     /* 달력보다 뒤에 배치 */
     display: none;
     /* 기본적으로 숨김 */
-    pointer-events: none;
 }
-
 
 .pickup-title {
     display: flex;
@@ -287,7 +308,7 @@ textarea {
 
 .confirm-btn {
     position: fixed;
-    bottom: 20px;
+    top: 73.2%;
     left: 50%;
     transform: translateX(-50%);
     background-color: var(--primary);
@@ -298,7 +319,7 @@ textarea {
     border-radius: 5px;
     cursor: pointer;
     z-index: 1001;
-    width: 90%;
+    width: 71%;
     display: none;
     /* 기본적으로 숨김 */
 }
@@ -306,3 +327,89 @@ textarea {
 .confirm-btn:hover {
     background-color: var(--primary-dark);
 }
+
+/* 예약 모달 스타일 */
+#reservationModal {
+    display: none;
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background-color: rgba(0, 0, 0, 0.5);
+    z-index: 999;
+}
+
+#reservationModal > div {
+    position: relative;
+    width: 300px;
+    margin: 100px auto;
+    padding: 20px;
+    background: var(--white);
+    border-radius: 10px;
+    box-shadow: 0 5px 20px rgba(0, 0, 0, 0.2);
+    text-align: center;
+}
+
+#reservationModal label {
+    display: block;
+    margin-bottom: 10px;
+    font-weight: bold;
+    color: var(--black);
+}
+
+#modalDateTime {
+    width: 100%;
+    padding: 10px 15px;
+    font-size: 16px;
+    border: 1px solid var(--background-grey);
+    border-radius: 8px;
+    box-shadow: inset 0 1px 2px rgba(0, 0, 0, 0.1);
+    background-color: #f9f9f9;
+    transition: border-color 0.3s, box-shadow 0.3s;
+    margin: 0;
+}
+
+#modalDateTime:focus {
+    border-color: var(--primary);
+    box-shadow: 0 0 5px rgba(0, 123, 255, 0.5);
+    outline: none;
+    background-color: white;
+}
+
+#reservationModal button {
+    margin: 10px 5px 0 5px;
+    padding: 8px 16px;
+    font-size: 14px;
+    border-radius: 20px;
+    border: 2px solid var(--primary);
+    background-color: var(--primary);
+    color: white;
+    cursor: pointer;
+}
+
+#reservationModal button:hover {
+    background-color: var(--primary-dark);
+    border-color: var(--primary-dark);
+}
+
+
+const openModalBtn = document.getElementById('openModalBtn');
+const reservationModal = document.getElementById('reservationModal');
+const closeModalBtn = document.getElementById('closeModalBtn');
+const submitDateBtn = document.getElementById('submitDateBtn');
+const dateTimeInput = document.getElementById('modalDateTime');
+const selectedDateTime = document.getElementById('selectedDateTime');
+
+openModalBtn.addEventListener('click', () => {
+    reservationModal.style.display = 'block';
+});
+
+closeModalBtn.addEventListener('click', () => {
+    reservationModal.style.display = 'none';
+});
+
+submitDateBtn.addEventListener('click', () => {
+    selectedDateTime.value = dateTimeInput.value;
+    reservationModal.style.display = 'none';
+});

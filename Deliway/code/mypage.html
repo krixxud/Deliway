@@ -9,7 +9,6 @@ if($_COOKIE['user_id'] == "") {
 $sql = "SELECT * from member where user_id = '".$_COOKIE['user_id']."'";
 $result = mysqli_query($con,$sql);
 $row = mysqli_fetch_array($result);
-
 ?>
 
 <!DOCTYPE html>

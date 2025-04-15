@@ -1,3 +1,14 @@
+<?php
+session_start();
+include "../config/db.php";
+
+$sql = "select * from reser where store_idx='".$_GET['store_idx']."'";
+
+$result = mysqli_query($con, $sql);
+
+$today = date("Y-m-d");
+?>
+
 <!DOCTYPE html>
 <html lang="ko">
 <head>
@@ -10,6 +21,7 @@
     <link rel="stylesheet" href="./css/owner-reservation.css">
     <script src="./js/owner-common.js" defer></script>
     <script src="./js/owner-reservation.js" defer></script>
+
 <body>
     <button class="sidebar-toggle" aria-label="메뉴 열기">
         <i class="ri-menu-line"></i>
@@ -31,7 +43,7 @@
                     </a>
                 </li>
                 <li class="nav-item">
-                    <a href="./owner_reservation.html">
+                    <a href="./owner_reservation.html?store_idx=<?php echo $row['store_idx'];?>">
                         <i class="ri-calendar-line"></i>
                         예약 관리
                     </a>
@@ -60,6 +72,12 @@
                         설정
                     </a>
                 </li>
+                <li class="nav-item">
+                    <a href="./logout.php">
+                        <i class="ri-logout-box-r-line"></i>
+                        로그아웃
+                    </a>
+                </li>
             </ul>
         </nav>
     </aside>
@@ -75,21 +93,16 @@
 
         <!-- 날짜 선택 및 필터 영역 -->
         <section class="date-filter-section" aria-labelledby="date-filter-title">
-            <h2 id="date-filter-title" class="visually-hidden">날짜 및 필터 선택</h2>
-            <form class="date-selector" role="form">
-                <select name="year-month" aria-label="년월 선택">
-                    <option value="2024-02">2024년 2월</option>
-                </select>
-                <select name="day" aria-label="일 선택">
-                    <option value="23">23일</option>
-                </select>
+            <h2 id="date-filter-title" class="visually-hidden">검색</h2>
+            <form class="date-selector" role="form" method="post" action="wdate_search.html">
+                    <input type="hidden" name="store_idx" value="<?php echo $_GET['store_idx'];?>">
+                    <input type="date" name="reser_day" required> &nbsp;~&nbsp; <input type="date" name="reser_day1" required>
+                    <input type="radio" name="reser_ing" value="" checked>전체
+                    <input type="radio" name="reser_ing" value="예약신청">예약신청
+                    <input type="radio" name="reser_ing" value="예약확정">예약확정
+                    <input type="radio" name="reser_ing" value="예약취소">예약취소
+                    <input type="submit" class="filter-btn" value="검색하기">
             </form>
-            <nav class="reservation-filters" role="navigation" aria-label="예약 상태 필터">
-                <button type="button" class="filter-btn active" aria-pressed="true">전체</button>
-                <button type="button" class="filter-btn" aria-pressed="false">대기중</button>
-                <button type="button" class="filter-btn" aria-pressed="false">확정</button>
-                <button type="button" class="filter-btn" aria-pressed="false">취소</button>
-            </nav>
         </section>
 
         <!-- 통계 영역 -->
@@ -98,20 +111,35 @@
             <div class="stats-grid">
                 <article class="stat-card">
                     <header>
+                        <?php
+                        $tosql = "select * from reser where reser_day='".$today."' and (reser_ing='예약확정' or reser_ing='예약신청')";
+                        $resultto = mysqli_query($con, $tosql);
+                        $rowto = mysqli_num_rows($resultto);
+                        ?>
                         <h3 class="stat-label">오늘 예약</h3>
-                        <div class="stat-value">15</div>
+                        <div class="stat-value"><?php echo $rowto;?></div>
                     </header>
                 </article>
                 <article class="stat-card">
                     <header>
+                        <?php
+                        $tosql1 = "select * from reser where reser_ing='예약신청'";
+                        $resultto1 = mysqli_query($con, $tosql1);
+                        $rowto1 = mysqli_num_rows($resultto1);
+                        ?>
                         <h3 class="stat-label">대기중</h3>
-                        <div class="stat-value">3</div>
+                        <div class="stat-value"><?php echo $rowto1;?></div>
                     </header>
                 </article>
                 <article class="stat-card">
                     <header>
+                        <?php
+                        $tosql2 = "select * from reser where reser_pickup='1'";
+                        $resultto2 = mysqli_query($con, $tosql2);
+                        $rowto2 = mysqli_num_rows($resultto2);
+                        ?>
                         <h3 class="stat-label">픽업 요청</h3>
-                        <div class="stat-value">2</div>
+                        <div class="stat-value"><?php echo $rowto2;?></div>
                     </header>
                 </article>
             </div>
@@ -121,37 +149,49 @@
             <!-- 예약 목록 영역 -->
             <section class="reservation-section" aria-labelledby="reservation-list-title">
                 <h2 id="reservation-list-title" class="visually-hidden">예약 목록</h2>
+                <?php
+                while($row = mysqli_fetch_array($result)) {
+                ?>
                 <div class="card">
                     <ul class="reservation-list" role="list">
                         <li class="reservation-item">
                             <article class="reservation-content">
                                 <header class="reservation-header">
                                     <div class="customer-info">
-                                        <h3>김손님</h3>
-                                        <span>4인</span>
+                                        <h3><?php echo $row['reser_name'];?></h3>
+                                        <span><?php echo $row['reser_number'];?>인</span>
                                     </div>
-                                    <span class="status-badge status-pending" role="status">대기중</span>
+                                    <span class="status-badge status-pending" role="status"><?php echo $row['reser_ing'];?></span>
                                 </header>
                                 <div class="reservation-details">
                                     <dl>
                                         <dt>예약 시간</dt>
-                                        <dd>2024-02-23 18:30</dd>
+                                        <dd><?php echo $row['reser_day'];?></dd>
+                                        <?php
+                                        $sql1 = "select * from member where user_id='".$row['user_id']."'";
+                                        $result1 = mysqli_query($con, $sql1);
+                                        $row1 = mysqli_fetch_array($result1);
+                                        ?>
                                         <dt>연락처</dt>
-                                        <dd>010-1234-5678</dd>
+                                        <dd><?php echo $row1['user_phone'];?></dd>
                                         <dt>요청사항</dt>
-                                        <dd>창가 자리 희망</dd>
+                                        <dd><?php echo $row['reser_memo'];?></dd>
                                         <dt>픽업 요청</dt>
-                                        <dd>강남역 4번 출구</dd>
+                                        <dd><?php if($row['reser_pickup'] == "1"){?>요청 됨<?php } ?></dd>
                                     </dl>
                                 </div>
                                 <footer class="reservation-actions">
-                                    <button type="button" class="btn btn-primary">승인</button>
-                                    <button type="button" class="btn btn-danger">거절</button>
+                                    <button type="button" class="btn btn-primary"><a href="reser_ok.php?reser_idx=<?php echo $row['reser_idx'];?>&reser_ing=1&store_idx=<?php echo $_GET['store_idx'];?>">승인</a></button>
+                                    <button type="button" class="btn btn-danger"><a href="reser_ok.php?reser_idx=<?php echo $row['reser_idx'];?>&reser_ing=0&store_idx=<?php echo $_GET['store_idx'];?>">거절</a></button>
+                                    <button type="button" class="btn btn-danger"><a href="reser_ok.php?reser_idx=<?php echo $row['reser_idx'];?>&reser_ing=2&store_idx=<?php echo $_GET['store_idx'];?>">방문완료</a></button>
                                 </footer>
                             </article>
                         </li>
                     </ul>
                 </div>
+                <?php
+                }
+                ?>
             </section>
 
             <!-- 예약 관리 사이드바 -->
@@ -197,4 +237,5 @@
         </div>
     </main>
 </body>
+
 </html>

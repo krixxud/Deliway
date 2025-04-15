@@ -1,5 +1,13 @@
+<?php
+session_start();
+include "../config/db.php";
+
+$store_category = $_GET['store_category'];
+
+?>
 <!DOCTYPE html>
 <html lang="ko">
+
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
@@ -14,14 +22,16 @@
   <script src="./js/review_write.js"></script>
   <script src="./js/common.js" defer></script>
 </head>
+
 <body>
   <header>
     <div class="page-header">
       <a href="#"><i class="fa fa-angle-left icon"></i><span class="hidden" onclick="goBack(event)">뒤로가기</span></a>
       <h1 class="title hidden">검색 결과</h1>
-      <form action="#">
-        <input type="text" id="searchInput" name="search" value="동구청" placeholder="원하는 주제나 맛집을 입력해주세요.">
-        <button type="button" onclick="clearSearch()"><i class="fa fa-close icon"></i><span class="hidden">지우기</span></button>
+      <form method="post" action="search_result_1.html">
+        <input type="text" id="searchInput" name="search" value="<?php echo $_GET['store_category'];?>" placeholder="원하는 주제나 맛집을 입력해주세요.">
+        <button type="button" onclick="clearSearch()"><i class="fa fa-close icon"></i><span
+            class="hidden">지우기</span></button>
       </form>
     </div>
   </header>
@@ -46,56 +56,41 @@
       <li><button type="button">픽업서비스 가능</button></li>
     </ul>
     <!-- 검색 결과 -->
+    <?php
+    $sql = "select * from store where store_category='".$store_category."'";
+    $result = mysqli_query($con, $sql);
+    ?>
+    
     <div class="search-results">
       <h2 class="hidden">검색 결과</h2>
+      <?php
+      while($row = mysqli_fetch_array($result)){
+      ?>
       <div class="reservation-card">
         <div class="rest-info">
-          <img src="../images/food.png" alt="">
+          <img src="./upload/<?php echo $row['file_copied_1'];?>">
           <div class="rest">
             <div class="rest-place">
-              <p class="restaurant-name sub-title2">제주고씨 든렘지 레스토랑</p>
-              <p class="restaurant-location small">양식 · 대구 동구 신천동</p>
+              <p class="restaurant-name sub-title2"><?php echo $row['store_name'];?></p>
+              <?php
+                $store_address = explode(' ', $row['store_address1']);
+                $store_address1 = $store_address[0];
+                $store_address2 = $store_address[1];
+                $store_address3 = $store_address[2];
+                ?>
+              <p class="restaurant-location small"><?php echo $store_category; ?> · <?php echo $store_address1; ?> &nbsp;<?php echo $store_address2; ?> &nbsp;<?php echo $store_address3; ?></p>
             </div>
             <div class="rest-time">
-              <p class="restaurant-time"><i class="far fa-clock clock" aria-hidden="true"></i><span>11:30 - 21:00</span></p>
+              <p class="restaurant-time"><i class="far fa-clock clock" aria-hidden="true"></i><span><?php echo $row['store_weekday1'];?> - <?php echo $row['store_weekday2'];?></span></p>
               <p class="all-day">연중무휴</p>
             </div>
           </div>
         </div>
-        <a href="./store_detail.html" class="view-details">예약하러 가기 <i class="fa fa-angle-right right" aria-hidden="true"></i></a>
+        <a href="./store_detail.html?store_idx=<?php echo $row['store_idx'];?>" class="view-details">예약하러 가기 <i class="fa fa-angle-right right" aria-hidden="true"></i></a>
       </div>
-      <div class="reservation-card">
-        <div class="rest-info">
-          <img src="../images/food.png" alt="">
-          <div class="rest">
-            <div class="rest-place">
-              <p class="restaurant-name sub-title2">제주고씨 든렘지 레스토랑</p>
-              <p class="restaurant-location small">양식 · 대구 동구 신천동</p>
-            </div>
-            <div class="rest-time">
-              <p class="restaurant-time"><i class="far fa-clock clock" aria-hidden="true"></i><span>11:30 - 21:00</span></p>
-              <p class="all-day">연중무휴</p>
-            </div>
-          </div>
-        </div>
-        <a href="./store_detail.html" class="view-details">예약하러 가기 <i class="fa fa-angle-right right" aria-hidden="true"></i></a>
-      </div>
-      <div class="reservation-card">
-        <div class="rest-info">
-          <img src="../images/food.png" alt="">
-          <div class="rest">
-            <div class="rest-place">
-              <p class="restaurant-name sub-title2">제주고씨 든렘지 레스토랑</p>
-              <p class="restaurant-location small">양식 · 대구 동구 신천동</p>
-            </div>
-            <div class="rest-time">
-              <p class="restaurant-time"><i class="far fa-clock clock" aria-hidden="true"></i><span>11:30 - 21:00</span></p>
-              <p class="all-day">연중무휴</p>
-            </div>
-          </div>
-        </div>
-        <a href="./store_detail.html" class="view-details">예약하러 가기 <i class="fa fa-angle-right right" aria-hidden="true"></i></a>
-      </div>
+      <?php
+    }
+    ?>
     </div>
   </section>
   <!-- 모달 창들 -->

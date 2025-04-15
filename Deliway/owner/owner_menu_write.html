@@ -1,6 +1,10 @@
 <?php
 session_start();
 include "../config/db.php";
+
+$sql1 = "select * from store where user_id='".$_SESSION['user_id']."'";
+$result1 = mysqli_query($con, $sql1);
+$row1 = mysqli_fetch_array($result1);
 ?>
 
 <!DOCTYPE html>
@@ -17,6 +21,7 @@ include "../config/db.php";
 
     <form action="menu_ok.php" method="post" enctype="multipart/form-data">
         <input type="hidden" name="user_id" value="<?php echo $_SESSION['user_id'];?>">
+        <input type="hidden" name="store_idx" value="<?php echo $row1['store_idx'];?>">
         <label for="menu_category">카테고리</label>
         <select name="menu_category">
             <option value="">-선택-</option>

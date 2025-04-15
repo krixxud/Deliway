@@ -1,0 +1,31 @@
+<?php
+session_start();
+include "../config/db.php";
+
+$store_idx = $_GET ['store_idx'];
+$user_idx = $_GET ['user_idx'];
+$reser_idx = $_GET ['reser_idx'];
+$review_idx = $_GET ['review_idx'];
+$user_like = $_GET ['user_like'];
+
+$sql = "select * from review_like where user_idx='".$user_idx."' and reser_idx='".$reser_idx."' and review_idx='".$review_idx."' and store_idx='".$store_idx."'";
+echo $sql;
+$result = mysqli_query($con, $sql);
+$row = mysqli_fetch_array($result);
+
+if ($row == 0) {
+    $sql = "INSERT INTO review_like (user_idx, store_idx, reser_idx, user_like, review_idx)
+                            VALUES (".$user_idx.",".$store_idx.",".$reser_idx.",".$user_like.",".$review_idx.")";
+    
+    mysqli_query($con, $sql);
+} else {
+    $sql = "UPDATE review_like SET user_like='".$user_like."' where user_idx='".$user_idx."' and reser_idx='".$reser_idx."'";
+    mysqli_query($con, $sql);
+}
+?>
+
+
+
+<script>
+    location.href="review_more.html?store_idx=<?php echo $store_idx;?>";
+</script>

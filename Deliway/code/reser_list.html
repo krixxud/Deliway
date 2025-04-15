@@ -1,3 +1,14 @@
+<?php
+
+session_start();
+include "../config/db.php";
+
+$store_idx = $_GET['store_idx'];
+$sql = "SELECT * FROM reser WHERE user_id = '".$_COOKIE['user_id']."' AND (reser_ing = '예약신청' OR reser_ing = '예약확정')";
+$result = mysqli_query($con,$sql);
+$total = mysqli_num_rows($result);
+
+?>
 <!DOCTYPE html>
 <html lang="ko">
 
@@ -19,17 +30,18 @@
 <body>
     <header>
         <h1 class="title">예약 내역</h1>
-        <a href="#" onclick="goBack(event)"><i class="fa fa-angle-left" aria-hidden="true"></i><span class="hidden">뒤로가기</span></a>
+        <a href="#" onclick="goBack(event)"><i class="fa fa-angle-left" aria-hidden="true"></i><span
+                class="hidden">뒤로가기</span></a>
     </header>
 
     <nav id="gnb">
         <h2 class="hidden">주 메뉴</h2>
         <ul>
-          <li><a href="./main.html" class="homeBtn">홈</a></li>
-          <li><a href="./search.html" class="searchBtn">검색</a></li>
-          <li><a href="./like_list.html" class="likeBtn">찜한 맛집</a></li>
-          <li><a href="./reser_list.html" class="reservationBtn">예약내역</a></li>
-          <li><a href="./mypage.html" class="mypageBtn">마이페이지</a></li>
+            <li><a href="./main.html" class="homeBtn">홈</a></li>
+            <li><a href="./search.html" class="searchBtn">검색</a></li>
+            <li><a href="./like_list.html" class="likeBtn">찜한 맛집</a></li>
+            <li><a href="./reser_list.html" class="reservationBtn">예약내역</a></li>
+            <li><a href="./mypage.html" class="mypageBtn">마이페이지</a></li>
         </ul>
     </nav>
 
@@ -46,76 +58,14 @@
     <main>
         <section id="section">
             <h2 class="hidden">예약 및 방문기록</h2>
-            <!-- 각각 클릭시 정보만 바뀌게 작성 ui동일하기 떄문 -->
-
-
-            <div class="tab-content">
-
-            <div class="round sub-title2">
-                <!-- 총 갯수 span태그에 총 몇건인지 데이터 표기 -->
-                <p>총 <span>8</span>건</p>
-
-                <!-- option에 더 넣을 내용있으면 바로 추가하겠음 -->
-                <select name="#" class="visit-day body1">
-                    <option value="">방문일자</option>
-                    <option value="">일주일</option>
-                    <option value="">1달 전</option>
-                    <option value="">3달 전</option>
-                </select>
-            </div>
-
-            <!-- 예약 카드 영역 -->
-            <div class="reservation-card">
-                <div class="history body1">
-                    <p>예약 확정</p>
-                    <p>총 1회 방문</p>
-                </div>
-                <div class="rest-info">
-                    <img src="../images/food.png" alt="">
-                    <div class="rest">
-                        <div class="rest-place">
-                            <p class="restaurant-name sub-title2">제주고씨 든렘지 레스토랑</p>
-                            <p class="restaurant-location small">양식 · 대구 동구 신천동</p>
-                        </div>
-                        <div class="rest-time">
-                            <p class="restaurant-time body1"><span>2025.07.27(금) · 18:00</span></p>
-                            <p class="person body1">2명</p>
-                        </div>
-                    </div>
-                </div>
-                <a href="./reser_info.html" class="view-details">예약 정보 확인 <i class='fas fa-plus plus'></i></a>
-            </div>
-
-            <div class="reservation-card">
-                <div class="history body1">
-                    <p>예약 확정</p>
-                    <p>총 12회 방문</p>
-                </div>
-                <div class="rest-info">
-                    <img src="../images/food.png" alt="">
-                    <div class="rest">
-                        <div class="rest-place">
-                            <p class="restaurant-name sub-title2">토스트를 네 입에 토스</p>
-                            <p class="restaurant-location small">양식 · 대구 동구 신천동</p>
-                        </div>
-                        <div class="rest-time">
-                            <p class="restaurant-time body1"><span>2025.07.27(금) · 12:00</span></p>
-                            <p class="person body1">2명</p>
-                        </div>
-                    </div>
-                </div>
-                <a href="./reser_info.html" class="view-details">예약 정보 확인<i class='fas fa-plus plus'></i></a>
-            </div>
-        </div>
-
-            <!-- 방문 기록 -->
+            
+            <!------- 나의 예약 탭 ------->
             <div class="tab-content">
                 <div class="round sub-title2">
-                    <!-- 총 갯수 span태그에 총 몇건인지 데이터 표기 -->
-                    <p>총 <span>2</span>건</p>
-
-                    <!-- option에 더 넣을 내용있으면 바로 추가하겠음 -->
-                    <select name="#" class="visit-day on body1">
+                    <p>총
+                        <?php echo $total ?>건
+                    </p>
+                    <select name="#" class="visit-day body1">
                         <option value="">방문일자</option>
                         <option value="">일주일</option>
                         <option value="">1달 전</option>
@@ -124,68 +74,160 @@
                 </div>
 
                 <!-- 예약 카드 영역 -->
+                <?php
+                while($row = mysqli_fetch_array($result)){
+                ?>
                 <div class="reservation-card">
                     <div class="history body1">
-                        <p>리뷰 완료</p>
-                        <p>총 1회 방문</p>
+
+                        <!-- 예약 상태 (신청/확정/취소)-->
+                        <?php
+                    if ($row['reser_ing'] == "예약취소"){
+                    ?>
+                        <p>취소된 예약</p>
+                        <?php
+                    } else {
+                    ?>
+                        <p>
+                            <?php echo $row['reser_ing']; ?>
+                        </p>
+                        <?php
+                    }
+                    ?>
                     </div>
+                    <?php
+                $sql1 = "SELECT * FROM store where store_idx = '".$row['store_idx']."'";
+                $result1 = mysqli_query($con,$sql1);
+                $row1 = mysqli_fetch_array($result1);
+                ?>
                     <div class="rest-info">
-                        <img src="../images/food.png" alt="">
+                        <img src="upload/<?php echo $row1['file_copied_2'];?>">
                         <div class="rest">
                             <div class="rest-place">
-                                <p class="restaurant-name sub-title2">제주고씨 든렘지 레스토랑</p>
-                                <p class="restaurant-location small">양식 · 대구 동구 신천동</p>
+                                <p class="restaurant-name sub-title2">
+                                    <?php echo $row1['store_name']; ?>
+                                </p>
+                                <p class="restaurant-location small">
+                                    <?php
+                                if($row1['store_category'] == "한식") { echo '한식';
+                                } else if ($row1['store_category'] == "일식") { echo '일식';
+                                } else if ($row1['store_category'] == "중식") { echo '중식';
+                                } else if ($row1['store_category'] == "양식") { echo '양식';
+                                } else if ($row1['store_category'] == "카페&디저트") { echo '카페&디저트';
+                                } else if ($row1['store_category'] == "채식") { echo '채식';
+                                } else if ($row1['store_category'] == "뷔페") { echo '뷔페';
+                                } else if ($row1['store_category'] == "오마카세") { echo '오마카세';
+                                } ?>
+                                    ·
+                                    <?php echo $row1['store_address1']; ?>
+                                </p>
                             </div>
                             <div class="rest-time">
-                                <p class="restaurant-time body1"><span>2025.07.27(금) · 18:00</span></p>
-                                <p class="person body1">2명</p>
+                                <p class="restaurant-time body1">
+                                    <?php
+                                $reser_day = date("Y.m.d · H:i", strtotime($row['reser_day']));
+                                echo $reser_day;
+                                ?>
+                                </p>
+                                <p class="person body1">
+                                    <?php echo $row['reser_number']; ?> 명
+                                </p>
                             </div>
                         </div>
                     </div>
-                    <a href="./review_detail.html" class="view-details">내가 쓴 리뷰 보기 <i class='fas fa-plus plus'></i></a>
+                    <a href="./reser_info.html?reser_idx=<?php echo $row['reser_idx'] ?>" class="view-details">예약 정보 확인
+                        <i class='fas fa-plus plus'></i></a>
+                </div>
+                <?php
+            }
+            ?>
+            </div>
+
+            <!------- 방문 기록 탭 ------->
+            <div class="tab-content">
+                <?php
+                $sql_visit = "SELECT * FROM reser WHERE user_id = '".$_COOKIE['user_id']."' AND reser_ing = '방문완료'";
+                $result_visit = mysqli_query($con, $sql_visit);
+                $visit_total = mysqli_num_rows($result_visit);
+                ?>
+
+                <div class="round sub-title2">
+                    <p>총 <?php echo $visit_total ?>건</p>
+                    <select name="#" class="visit-day on body1">
+                        <option value="">방문일자</option>
+                        <option value="">일주일</option>
+                        <option value="">1달 전</option>
+                        <option value="">3달 전</option>
+                    </select>
                 </div>
 
+                <?php
+                while($visit_row = mysqli_fetch_array($result_visit)){
+                    $sql_store = "SELECT * FROM store WHERE store_idx = '".$visit_row['store_idx']."'";
+                    $result_store = mysqli_query($con, $sql_store);
+                    $store = mysqli_fetch_array($result_store);
+                ?>
                 <div class="reservation-card">
                     <div class="history body1">
-                        <p>예약 취소</p>
-                        <p>총 12회 방문</p>
+                        <p>
+                            <?php echo $visit_row['reser_ing'];?>
+                        </p>
                     </div>
                     <div class="rest-info">
-                        <img src="../images/food.png" alt="">
+                        <img src="./upload/<?php echo $store['file_copied_2'];?>">
                         <div class="rest">
                             <div class="rest-place">
-                                <p class="restaurant-name sub-title2">토스트를 네 입에 토스</p>
-                                <p class="restaurant-location small">양식 · 대구 동구 신천동</p>
+                                <p class="restaurant-name sub-title2">
+                                    <?php echo $store['store_name']; ?>
+                                </p>
+                                <p class="restaurant-location small">
+                                    <?php
+                                    if($store['store_category'] == "한식") { echo '한식';
+                                    } else if ($store['store_category'] == "일식") { echo '일식';
+                                    } else if ($store['store_category'] == "중식") { echo '중식';
+                                    } else if ($store['store_category'] == "양식") { echo '양식';
+                                    } else if ($store['store_category'] == "카페&디저트") { echo '카페&디저트';
+                                    } else if ($store['store_category'] == "채식") { echo '채식';
+                                    } else if ($store['store_category'] == "뷔페") { echo '뷔페';
+                                    } else if ($store['store_category'] == "오마카세") { echo '오마카세';
+                                    } ?>
+                                    ·
+                                    <?php echo $store['store_address1']; ?>
+                                </p>
                             </div>
                             <div class="rest-time">
-                                <p class="restaurant-time body1"><span>2025.07.27(금) · 12:00</span></p>
-                                <p class="person body1">2명</p>
+                                <p class="restaurant-time body1">
+                                    <?php
+                                    $visit_day = date("Y.m.d · H:i", strtotime($visit_row['reser_day']));
+                                    echo $visit_day;
+                                    ?>
+                                </p>
+                                <p class="person body1">
+                                    <?php echo $visit_row['reser_number']; ?> 명
+                                </p>
                             </div>
                         </div>
                     </div>
-                    <a href="./reser_cancle.html" class="view-details">취소 내역 확인<i class='fas fa-plus plus'></i></a>
-                </div>
+                    <?php
+                    $sql2 = "select * from review where user_id='".$_COOKIE['user_id']."' and 
+                    store_idx='".$visit_row['store_idx']."' and reser_idx='".$visit_row['reser_idx']."'";
+                    $result2 = mysqli_query($con, $sql2);
+                    $total2 = mysqli_num_rows($result2);
+                    ?>
 
-                                <div class="reservation-card">
-                    <div class="history body1">
-                        <p>리뷰 작성 전</p>
-                        <p>총 12회 방문</p>
-                    </div>
-                    <div class="rest-info">
-                        <img src="../images/food.png" alt="">
-                        <div class="rest">
-                            <div class="rest-place">
-                                <p class="restaurant-name sub-title2">토스트를 네 입에 토스</p>
-                                <p class="restaurant-location small">양식 · 대구 동구 신천동</p>
-                            </div>
-                            <div class="rest-time">
-                                <p class="restaurant-time body1"><span>2025.07.27(금) · 12:00</span></p>
-                                <p class="person body1">2명</p>
-                            </div>
-                        </div>
-                    </div>
-                    <a href="./review_write.html" class="view-details">리뷰 작성하기 <i class='fas fa-plus plus'></i></a>
+                    <?php
+                    if($total2 > 0) {
+                    } else {
+                    ?>
+                    <a href="./review_write.html?reser_idx=<?php echo $visit_row['reser_idx'];?>"
+                        class="view-details">리뷰 작성하기<i class='fas fa-plus plus'></i></a>
+                    <?php
+                    }
+                    ?>
                 </div>
+                <?php
+                }
+                ?>
             </div>
         </section>
 

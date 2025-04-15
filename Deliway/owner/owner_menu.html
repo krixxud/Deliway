@@ -64,34 +64,44 @@ include "../config/db.php";
                         설정
                     </a>
                 </li>
+                <li class="nav-item">
+                    <a href="./logout.php">
+                        <i class="ri-logout-box-r-line"></i>
+                        로그아웃
+                    </a>
+                </li>
             </ul>
         </nav>
     </aside>
         <main class="main-content">
             <header class="page-header">
                 <h2 class="page-title">메뉴 관리</h2>
-                <button class="btn btn-primary"><i class="ri-add-line"></i><a href="./menu_category.html">카테고리</a></button>
-                <button class="btn btn-primary"><i class="ri-add-line"></i><a href="./owner_menu_write.html">새 메뉴 추가</a></button>
-            </header>
 
-            <table>
-                <tr>
+                <div class="btn-group">
+                    <button class="btn btn-primary"><i class="ri-add-line"></i><a href="./menu_category.html">카테고리</a></button>
+                    <button class="btn btn-primary"><i class="ri-add-line"></i><a href="./owner_menu_write.html">새 메뉴 추가</a></button>
+                </div>
+            </header>
+            
+
+            <div class="menu-cards">
                 <?php
                 $sql = "select * from menu where user_id='".$_SESSION['user_id']."'";
                 $result = mysqli_query($con, $sql);
                 while($row = mysqli_fetch_array($result)){
                 ?>
-                    <td>
-                        <img src="../code/upload/<?php echo $row['file_copied_0'];?>" width="150"><br>
-                        <?php echo $row['store_menu_name']?>&nbsp;  <?php echo $row['store_menu_cost']?><br>
-                        <?php echo $row['store_menu_memo']?> <br>
-                        수정 삭제
-                    </td>
+                <div class="card">
+                    <p class="sub_title"><?php echo $row['store_menu_name']?></p>  
+                    <p class="price"><?php echo $row['store_menu_cost']?></p>
+                    <p class="memo"><?php echo $row['store_menu_memo']?></p>
+                    <a href="owner_menu_edit.html?menu_idx=<?php echo $row['menu_idx'];?>">수정</a>
+                    <p>삭제</p>
+                    <img src="../code/upload/<?php echo $row['file_copied_0'];?>" width="150"><br>
+                </div>
                 <?php
                 }
                 ?>    
-                </tr>
-            </table>
+            </div>
         </main>
 </body>
 </html>

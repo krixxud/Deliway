@@ -137,6 +137,12 @@ main {
     color: var(--text-grey);
 }
 
+dt img {
+    width: 20px;
+    height: 20px;
+    margin-top: 3px;
+  }
+
 .store-stats dd {
     font-weight: bold;
 }
@@ -249,13 +255,44 @@ main {
 
 .store-menu-section .photo {
     position: absolute;
-    bottom: 3px;
+    bottom: 6px;
     right: 0;
 }
 
-.store-menu-section .photo img {
-    border-radius: 50%;
+.store-menu-section .photo > .menu_img {
+    height: 100px;
+    border-radius: 15px;
+    overflow: hidden;
+    display: flex;
+    justify-content: center;
+    align-items: center;
 }
+
+.store-menu-section .photo > .menu_img > img {
+    height: 100%; 
+
+}
+
+/* 모달 배경 */
+.modal {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background-color: rgba(0, 0, 0, 0.8);
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    z-index: 1000;
+  }
+  
+  .modal img {
+    max-width: 90%;
+    max-height: 90%;
+    object-fit: contain;
+    border-radius: 15px;
+  }
 
 .seemore {
     margin: 0 auto;
@@ -431,6 +468,11 @@ main {
 /* 리뷰 내용 */
 .review-content {
     margin-bottom: 16px;
+}
+
+.review-title {
+    margin-bottom: 10px;
+    line-height: 1.5;
 }
 
 .review-text {

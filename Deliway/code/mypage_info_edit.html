@@ -87,6 +87,10 @@ $row = mysqli_fetch_array($result);
         </form>
     </main>
     <script>
+        function enablePhoneEdit() {
+            document.getElementById("userPhone").readOnly = false; // 읽기 전용 해제
+            document.getElementById("submit-button").disabled = false; // 변경 버튼 활성화
+        }
         function execDaumPostcode() {
             new daum.Postcode({
                 oncomplete: function (data) {
@@ -96,10 +100,6 @@ $row = mysqli_fetch_array($result);
             }).open();
         }
 
-        function enablePhoneEdit() {
-            document.getElementById("userPhone").readOnly = false; // 읽기 전용 해제
-            document.getElementById("submit-button").disabled = false; // 변경 버튼 활성화
-        }
     </script>
     <script src="https://t1.daumcdn.net/mapjsapi/bundle/postcode/prod/postcode.v2.js"></script>
 </body>

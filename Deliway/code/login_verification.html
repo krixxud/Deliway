@@ -8,7 +8,71 @@
     <link rel="stylesheet" href="./css/common.css">
     <link rel="stylesheet" href="css/webfont.css">
     <link rel="stylesheet" href="./css/login_verification.css">
-    <script src="./js/common.js" defer></script></head>
+    <script src="./js/common.js" defer></script>
+    <script src="https://code.jquery.com/jquery-3.7.1.js"></script>
+    <script>
+    $(document).ready(function () {
+        $(document).off("keyup", ".check").on("keyup", ".check", function () {
+            var self = $(this);
+            var value = self.val().trim();
+            var id = self.attr("id");
+
+            if (id === "user_id") {
+                $.post("PHP/id_check.php", { user_id: value }, function (data) {
+                    $("#id_check").html(data);
+                    if (data.includes("중복")) {
+                        $("#id_check").css("color", "red");
+                    } else {
+                        $("#id_check").css("color", "green");
+                    }
+                });
+            }
+
+            if (id === "user_phone") {
+                $.post("PHP/number_check.php", { user_phone: value }, function (data) {
+                    console.log("user_phone:", value);
+                    $("#number_check").html(data);
+                    if (data.includes("중복")) {
+                        $("#number_check").css("color", "red");
+                    } else {
+                        $("#number_check").css("color", "green");
+                    }
+                });
+            }
+        });
+    });
+    </script>
+
+    <script>
+        function inputPhoneNumber(obj) {
+        
+            var number = obj.value.replace(/[^0-9]/g, "");
+            var phone = "";
+        
+            if(number.length < 4) {
+                return number;
+            } else if(number.length < 7) {
+                phone += number.substr(0, 3);
+                phone += "-";
+                phone += number.substr(3);
+            } else if(number.length < 11) {
+                phone += number.substr(0, 3);
+                phone += "-";
+                phone += number.substr(3, 3);
+                phone += "-";
+                phone += number.substr(6);
+            } else {
+                phone += number.substr(0, 3);
+                phone += "-";
+                phone += number.substr(3, 4);
+                phone += "-";
+                phone += number.substr(7);
+            }
+            obj.value = phone;
+        }
+        </script>
+</head>
+    
 
 <body>
     <header>
@@ -17,27 +81,43 @@
     </header>
     <main>
         <form method="post" action="./PHP/login_verification_ok.php">
-            <div>
-                <label class="login">이메일 주소를 입력해주세요
-                    <input type="email" name="user_id" placeholder="example@email.com" required>
-                </label>
-                <button class="btn sub-title2">중복 확인</button>
-            </div>
-            <div>
-                <label class="login">전화번호를 입력해주세요
-                    <input type="text" name="user_phone" placeholder="000-0000-0000" required>
-                </label>
-                <button class="btn sub-title2">중복 확인</button>
-            </div>
-            <div>
-                <label class="login">비밀번호를 입력해주세요
-                    <input type="password" name="user_pass" placeholder="비밀번호를 입력하세요" required>
-                    <span class="body1 hidden">비밀번호는 문자 숫자 특수문자의 조합으로 8자리 이상 입력해주세요.</span>
-                </label>
-                <label>
-                    <input type="password" name="user_pass1" placeholder="비밀번호 확인" required>
-                    <span class="body1 hidden">비밀번호가 맞지 않습니다. 다시 입력해주세요.</span>
-                </label>
+            <input type="hidden" name="user_id" value="<?php echo $_GET['code'];?>">
+            <input type="hidden" name="code" value="<?php echo $_GET['code'];?>">
+            
+            <?php
+            if ($_GET['code'] == "") {
+            ?>
+                <div>
+                    <label class="login">이메일 주소를 입력해주세요</label>
+                    <input class="check" id="user_id" type="email" name="user_id" placeholder="example@email.com" required>
+                    <div id="id_check"></div>
+                </div>
+                <div>
+                    <label class="login">전화번호를 입력해주세요</label>
+                    <input class="check" type="text" id="user_phone" name="user_phone" placeholder="000-0000-0000" oninput="inputPhoneNumber(this)" maxlength="13" required>
+                    <div id="number_check"></div>
+                </div>
+                <div>
+                    <label class="login">비밀번호를 입력해주세요
+                        <input type="password" name="user_pass" placeholder="비밀번호를 입력하세요" required>
+                        <span class="body1 hidden">비밀번호는 문자 숫자 특수문자의 조합으로 8자리 이상 입력해주세요.</span>
+                    </label>
+                    <label>
+                        <input type="password" name="user_pass1" placeholder="비밀번호 확인" required>
+                        <span class="body1 hidden">비밀번호가 맞지 않습니다. 다시 입력해주세요.</span>
+                    </label>
+                </div>
+            <?php    
+            } else {
+            ?>
+                <div>
+                    <label class="login">전화번호를 입력해주세요</label>
+                    <input class="check" type="text" id="user_phone" name="user_phone" placeholder="000-0000-0000" oninput="inputPhoneNumber(this)" maxlength="13" required>
+                    <div id="number_check"></div>
+                </div>
+            <?php
+            }
+            ?>
                 <button type="submit" class="next title">다음</button>
             </div>
         </form>

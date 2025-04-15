@@ -1,3 +1,13 @@
+<?php
+session_start();
+include "../config/db.php";
+
+
+$sql_1 = "select * from review where store_idx='".$_GET['store_idx']."' order by review_wdate desc";
+$result_1 = mysqli_query($con, $sql_1);
+?>
+
+
 <!DOCTYPE html>
 <html lang="ko">
 
@@ -21,159 +31,166 @@
         </div>
     </header>
     <main>
-        <section class="review-container">
-            <h2 class="hidden">리뷰내용</h2>
-            <div class="review-header">
-                <div class="user-info">
-                    <div class="profile-image">
-                        <img src="https://placehold.co/40" alt="프로필 이미지">
-                    </div>
-                    <div class="detail-wrap">
-                        <div class="user-details">
-                            <p class="username sub-title1">헤르미온느</p>
-                            <span class="review-date body1">2023.12.19</span>
-                        </div>
-                        <div class="star-rating">
-                            ★★★★★
-                        </div>
-                    </div>
-                </div>
-            </div>
-            <div class="review-content">
-                <p class="review-text body2">
-                    처음에 들어갔을때 예쁜 공간이 눈에 들어와요. 음식 맛도 좋고 특히 조명에서 나오는 빛이 너무 예뻐 몽환적인 분위기로 데이트 필수코스입니다!
-                    인테리어가 정말 예쁘네요. 최고에요!
-                </p>
-                <div class="review-images">
-                    <img src="https://placehold.co/120" alt="리뷰 이미지 1">
-                    <img src="https://placehold.co/120" alt="리뷰 이미지 2">
-                    <img src="https://placehold.co/120" alt="리뷰 이미지 3">
-                    <img src="https://placehold.co/120" alt="리뷰 이미지 4">
-                    <img src="https://placehold.co/120" alt="리뷰 이미지 5">
-                    <img src="https://placehold.co/120" alt="리뷰 이미지 6">
-                </div>
-            </div>
-            <div class="review-actions">
-                <button class="like-btn sub-title1">
-                    <img class="like-icon1 active" src="../icon/like.png" alt="좋아요">
-                    <img class="like-icon2" src="../icon/liked.png" alt="좋아요">
-                    <span class="like-count">10</span>
-                </button>
-                <button class="comment-btn sub-title1">
-                    <img src="../icon/comment.png" alt="comment-icon">
-                    <span class="comment-count">3</span>
-                </button>
-            </div>
-        </section>
-        <section class="review-container">
-            <h2 class="hidden">리뷰내용</h2>
-            <div class="review-header">
-                <div class="user-info">
-                    <div class="profile-image">
-                        <img src="https://placehold.co/40" alt="프로필 이미지">
-                    </div>
-                    <div class="detail-wrap">
-                        <div class="user-details">
-                            <p class="username sub-title1">헤르미온느</p>
-                            <span class="review-date body1">2023.12.19</span>
-                        </div>
-                        <div class="star-rating">
-                            ★★★★★
-                        </div>
-                    </div>
-                </div>
-            </div>
-            <div class="review-content">
-                <p class="review-text body2">
-                    처음에 들어갔을때 예쁜 공간이 눈에 들어와요. 음식 맛도 좋고 특히 조명에서 나오는 빛이 너무 예뻐 몽환적인 분위기로 데이트 필수코스입니다!
-                    인테리어가 정말 예쁘네요. 최고에요!
-                </p>
-                <div class="review-images">
-                    <img src="https://placehold.co/120" alt="리뷰 이미지 1">
-                    <img src="https://placehold.co/120" alt="리뷰 이미지 2">
-                    <img src="https://placehold.co/120" alt="리뷰 이미지 3">
-                    <img src="https://placehold.co/120" alt="리뷰 이미지 4">
-                    <img src="https://placehold.co/120" alt="리뷰 이미지 5">
-                    <img src="https://placehold.co/120" alt="리뷰 이미지 6">
-                </div>
-            </div>
-            <div class="review-actions">
-                <button class="like-btn sub-title1">
-                    <img class="like-icon1 active" src="../icon/like.png" alt="좋아요">
-                    <img class="like-icon2" src="../icon/liked.png" alt="좋아요">
-                    <span class="like-count">10</span>
-                </button>
-                <button class="comment-btn sub-title1">
-                    <img src="../icon/comment.png" alt="comment-icon">
-                    <span class="comment-count">3</span>
-                </button>
-            </div>
-        </section>
-        <section class="review-container">
-            <h2 class="hidden">리뷰내용</h2>
-            <div class="review-header">
-                <div class="user-info">
-                    <div class="profile-image">
-                        <img src="https://placehold.co/40" alt="프로필 이미지">
-                    </div>
-                    <div class="detail-wrap">
-                        <div class="user-details">
-                            <p class="username sub-title1">헤르미온느</p>
-                            <span class="review-date body1">2023.12.19</span>
-                        </div>
-                        <div class="star-rating">
-                            ★★★★★
-                        </div>
-                    </div>
-                </div>
-            </div>
-            <div class="review-content">
-                <p class="review-text body2">
-                    처음에 들어갔을때 예쁜 공간이 눈에 들어와요. 음식 맛도 좋고 특히 조명에서 나오는 빛이 너무 예뻐 몽환적인 분위기로 데이트 필수코스입니다!
-                    인테리어가 정말 예쁘네요. 최고에요!
-                </p>
-                <div class="review-images">
-                    <img src="https://placehold.co/120" alt="리뷰 이미지 1">
-                    <img src="https://placehold.co/120" alt="리뷰 이미지 2">
-                    <img src="https://placehold.co/120" alt="리뷰 이미지 3">
-                    <img src="https://placehold.co/120" alt="리뷰 이미지 4">
-                    <img src="https://placehold.co/120" alt="리뷰 이미지 5">
-                    <img src="https://placehold.co/120" alt="리뷰 이미지 6">
-                </div>
-            </div>
-            <div class="review-actions">
-                <button class="like-btn sub-title1">
-                    <img class="like-icon1 active" src="../icon/like.png" alt="좋아요">
-                    <img class="like-icon2" src="../icon/liked.png" alt="좋아요">
-                    <span class="like-count">10</span>
-                </button>
-                <button class="comment-btn sub-title1">
-                    <img src="../icon/comment.png" alt="comment-icon">
-                    <span class="comment-count">3</span>
-                </button>
-            </div>
-        </section>
-    </main>
-    <script>
-        document.addEventListener('DOMContentLoaded', function(){
-            initializeLikeButtons();
-        })
-        function initializeLikeButtons() {
-            const likeButtons = document.querySelectorAll('.like-btn');
+        <?php
+      while($row_1 = mysqli_fetch_array($result_1)){
 
-            likeButtons.forEach(likeButtons => {
-                likeButtons.addEventListener('click', function(e){
-                    e.preventDefault();
-                    e.stopPropagation();
+      $sql_2 = "select * from member where user_id='".$row_1['user_id']."'";
+      $result_2 = mysqli_query($con, $sql_2);
+      $row_2 = mysqli_fetch_array($result_2);
+      ?>
+      <div class="review-container">
+        <div class="review-header">
+          <div class="user-info">
+            <div class="profile-image">
+              <img src="upload/<?php echo $row_2['file_copied_0'];?>" width="40" height="40" onclick="openModal(this)">
+            </div>
+            <div class="detail-wrap">
+              <div class="user-details">
+                <p class="username sub-title1">
+                  <?php echo $row_2['user_name'];?>
+                </p>
+                <?php
+                // 가져온 시간 (데이터베이스에서 가져온 작성 시간)
+                $created_at = $row_1['review_wdate'];
+                // 상대적 시간 계산 함수
+                if (!function_exists('time_elapsed_string')) {
+                  function time_elapsed_string($datetime, $full = false) {
+                    $now = new DateTime;
+                    $ago = new DateTime($datetime);
+                    $diff = $now->diff($ago);
+                
+                    if ($diff->y > 0) return $diff->y . '년 전';
+                    if ($diff->m > 0) return $diff->m . '개월 전';
+                    if ($diff->d > 0) return $diff->d . '일 전';
+                    if ($diff->h > 0) return $diff->h . '시간 전';
+                    if ($diff->i > 0) return $diff->i . '분 전';
+                    return $diff->s . '초 전';
+                }
+              }
 
-                    const icon1 = this.querySelector(".like-icon1");//빈 하트
-                    const icon2 = this.querySelector(".like-icon2");//채워진 하트
+                // 변환된 시간 출력
+                $time_ago = time_elapsed_string($created_at);
+                ?>
+                <span class="review-date body1">
+                  <?php echo $time_ago; ?>
+                </span>
+              </div>
+              <div class="star-rating">
+                <?php if ($row_1['review_score']=="5") {
+                  echo "★★★★★";
+                } elseif ($row_1['review_score']=="4") {
+                  echo "★★★★";
+                } elseif ($row_1['review_score']=="3") {
+                  echo "★★★";
+                } elseif ($row_1['review_score']=="2") {
+                  echo "★★";
+                } elseif ($row_1['review_score']=="1") {
+                  echo "★";
+                } 
+                ?>
+              </div>
+            </div>
+          </div>
+        </div>
+        <div class="review-content">
+          <p class="review-title sub-title1">
+            <?php echo $row_1['review_title'];?>
+          </p>
 
-                    icon1.classList.toggle('active');
-                    icon2.classList.toggle('active');
-                })
-            })
-        }
-    </script>
+          <p class="review-text body2">
+            <?php echo $row_1['review_memo'];?>
+          </p>
+          <div class="review-images">
+            <img src="upload/<?php echo $row_1['file_copied_0'];?>" width="120" height="120" border-radius="8px"
+              onclick="openModal(this)">
+            <?php if($row_1['file_copied_1']==""){
+            } else {?>
+            <img src="upload/<?php echo $row_1['file_copied_1'];?>" width="120" height="120" border-radius="8px"
+              onclick="openModal(this)">
+            <?php }?>
+            <?php if($row_1['file_copied_2']==""){
+            } else {?>
+            <img src="upload/<?php echo $row_1['file_copied_2'];?>" width="120" height="120" border-radius="8px"
+              onclick="openModal(this)">
+            <?php }?>
+            <?php if($row_1['file_copied_3']==""){
+            } else {?>
+            <img src="upload/<?php echo $row_1['file_copied_3'];?>" width="120" height="120" border-radius="8px"
+              onclick="openModal(this)">
+            <?php }?>
+            <?php if($row_1['file_copied_4']==""){
+            } else {?>
+            <img src="upload/<?php echo $row_1['file_copied_4'];?>" width="120" height="120" border-radius="8px"
+              onclick="openModal(this)">
+            <?php }?>
+          </div>
+        </div>
+
+        <script>
+          // 이미지 클릭 시 모달을 열기
+          function openModal(imgElement) {
+            const modal = document.createElement('div');
+            modal.classList.add('modal');
+
+            // 이미지 추가
+            const modalImage = document.createElement('img');
+            modalImage.src = imgElement.src;
+            modal.appendChild(modalImage);
+
+            // 모달을 클릭하면 닫히게 설정
+            modal.onclick = function (event) {
+              if (event.target === modal) {
+                modal.style.display = 'none';
+              }
+            };
+
+            // 모달을 body에 추가
+            document.body.appendChild(modal);
+
+            // 모달 표시
+            modal.style.display = 'flex';
+          }
+        </script>
+            <?php
+            $sqlre = "select count(*) as cnt from review_like where reser_idx='".$row_1['reser_idx']."' and user_like=1";
+            $resultre = mysqli_query($con, $sqlre);
+            $rowre = mysqli_fetch_array($resultre);
+    
+            $sqllike = "select * from review_like where reser_idx='".$row_1['reser_idx']."' and user_idx='".$_COOKIE['user_idx']."'";
+            $resultlike = mysqli_query($con, $sqllike);
+            $rowlike = mysqli_fetch_array($resultlike);
+            ?>
+    
+            <div class="review-actions">
+              <button class="like-btn sub-title1">
+                <?php if ($rowlike['user_like'] == "" || $rowlike['user_like'] == "0") { ?>
+                  <a href="review_more_like.html?store_idx=<?php echo $row_1['store_idx'];?>&user_idx=<?php echo $_COOKIE['user_idx'];?>&reser_idx=<?php echo $row_1['reser_idx'];?>&review_idx=<?php echo $row_1['review_idx'];?>&user_like=1">
+                    <img class="like-icon1 active" src="../icon/like.png" alt="좋아요" width="22" height="22">
+                    <img class="like-icon2" src="../icon/liked.png" alt="좋아요" width="22" height="22" style="display: none;">
+                  </a>
+                <?php } else { ?>
+                  <a href="review_more_like.html?store_idx=<?php echo $row_1['store_idx'];?>&user_idx=<?php echo $_COOKIE['user_idx'];?>&reser_idx=<?php echo $row_1['reser_idx'];?>&review_idx=<?php echo $row_1['review_idx'];?>&user_like=0">
+                    <img class="like-icon1" src="../icon/like.png" alt="좋아요" width="22" height="22" style="display: none;">
+                    <img class="like-icon2 active" src="../icon/liked.png" alt="좋아요" width="22" height="22">
+                  </a>
+                <?php } ?>
+                <span class="like-count">
+                  <?php echo $rowre['cnt'];?>
+                </span>
+              </button>
+              <button class="comment-btn sub-title1">
+                <a href="review_detail.html?review_idx=<?php echo $row_1['review_idx'];?>"><img src="../icon/comment.png" alt="comment-icon"></a>
+                <?php
+                      $sql3 = "select count(*) as cnt1 from reply where review_idx='".$row_1['review_idx']."'";
+                      $result3 = mysqli_query($con, $sql3);
+                      $row3 = mysqli_fetch_array($result3);
+                      ?>
+                <span class="comment-count"><?php echo $row3['cnt1'];?></span>
+              </button>
+            </div>
+          </div>
+          <?php
+          }
+          ?>
 </body>
 </html>

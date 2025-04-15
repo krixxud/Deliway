@@ -1,5 +1,6 @@
 <?php
 session_start();
+include "../config/db.php";
 ?>
 <!DOCTYPE html>
 <html lang="ko">
@@ -12,9 +13,9 @@ session_start();
   <link rel="stylesheet" href="./css/main.css">
   <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/swiper@11/swiper-bundle.min.css">
 
-  <script src="./js/likeButton.js" defer></script>
   <script src="./js/slider2.js" defer></script>
   <script src="https://cdn.jsdelivr.net/npm/swiper@11/swiper-bundle.min.js"></script>
+  <script src="https://code.jquery.com/jquery-3.7.1.js"></script>
 </head>
 
 <body>
@@ -24,7 +25,22 @@ session_start();
   <section>
     <h2 class="hidden">위치 및 알림</h2>
     <ul>
-      <li><span class="gps">gps</span> <span>지역 위치</span></li>
+      <li><span class="gps">gps</span> <span><a href="#" onclick="getLocation()" class="location">
+        <!-- <img src="/img/main/ring.png" alt="" style="display: block;"> -->
+        <i class="fa-solid fa-location-dot"></i> 현재위치</a></span></li>
+
+        <script>
+          function getLocation() {
+              navigator.geolocation.getCurrentPosition(function (position) {
+                  var lat = position.coords.latitude; // 위도
+                  var lon = position.coords.longitude; // 경도
+
+                  window.location.assign("<?php echo basename( $_SERVER[ 'PHP_SELF' ] ); ?>?var1=" + position.coords.latitude + "&var2=" + position.coords.longitude);
+
+              });
+          };
+      </script>
+
       <li><a href="./alarm.html" class="notice">알림</a></li>
     </ul>
   </section>
@@ -68,7 +84,7 @@ session_start();
       <div class="category-container">
         <ul>
           <li>
-            <a href="./search_result.html">
+            <a href="./search_result.html?store_category=한식">
               <div>
                 <img src="../icon/krfood.png" alt="한식">
               </div>
@@ -76,7 +92,7 @@ session_start();
             </a>
           </li>
           <li>
-            <a href="./search_result.html">
+            <a href="./search_result.html?store_category=일식">
               <div>
                 <img src="../icon/jpfood.png" alt="일식">
               </div>
@@ -84,7 +100,7 @@ session_start();
             </a>
           </li>
           <li>
-            <a href="./search_result.html">
+            <a href="./search_result.html?store_category=중식">
               <div>
                 <img src="../icon/chfood.png" alt="중식">
               </div>
@@ -92,7 +108,7 @@ session_start();
             </a>
           </li>
           <li>
-            <a href="./search_result.html">
+            <a href="./search_result.html?store_category=양식">
               <div>
                 <img src="../icon/usfood.png" alt="양식">
               </div>
@@ -100,15 +116,15 @@ session_start();
             </a>
           </li>
           <li>
-            <a href="./search_result.html">
+            <a href="./search_result.html?store_category=카페&디저트">
               <div>
-                <img src="../icon/coffee.png" alt="카페와 디저트">
+                <img src="../icon/coffee.png" alt="카페&디저트">
               </div>
               <p>카페&디저트</p>
             </a>
           </li>
           <li>
-            <a href="./search_result.html">
+            <a href="./search_result.html?store_category=채식">
               <div>
                 <img src="../icon/began.png" alt="채식">
               </div>
@@ -116,15 +132,15 @@ session_start();
             </a>
           </li>
           <li>
-            <a href="./search_result.html">
+            <a href="./search_result.html?store_category=뷔페" style="width: 50px; height: 50px;">
               <div>
-                <img src="../icon/bupe.png" alt="뷔페">
+                <img src="../icon/bupe.png" alt="뷔페" style="width: 50px; height: 50px">
               </div>
               <p>뷔페</p>
             </a>
           </li>
           <li>
-            <a href="./search_result.html">
+            <a href="./search_result.html?store_category=오마카세">
               <div>
                 <img src="../icon/chobab.png" alt="오마카세">
               </div>
@@ -135,6 +151,11 @@ session_start();
       </div>
     </section>
 
+    <?php
+    $sql = "SELECT * FROM store WHERE store_ing = '승인' ORDER BY store_idx DESC, RAND() LIMIT 4";
+    $result = mysqli_query($con, $sql);
+    ?>
+    
     <section class="recomand-section">
       <div class="title-container">
         <div class="recomend-title">
@@ -142,72 +163,96 @@ session_start();
           <p>궁예도 한 수 접는 독심술</p>
         </div>
       </div>
-
+    
       <div class="store-container" id="slider">
         <ul>
+          <?php while ($row = mysqli_fetch_array($result)) { 
+            $bg_image = !empty($row['file_copied_1']) ? "upload/" . $row['file_copied_1'] : "default_bg.jpg"; // 배경 이미지 설정
+            
+            $sql6 = "select count(*) as cnt from review where store_idx='".$row['store_idx']."'";
+            $result6 = mysqli_query($con, $sql6);
+            $row6 = mysqli_fetch_array($result6);
+  
+            $sql7 = "select sum(review_score) as ts from review where store_idx='".$row['store_idx']."'";
+            $result7 = mysqli_query($con, $sql7);
+            $row7 = mysqli_fetch_array($result7);
+  
+            if ($row6['cnt'] !=0) {
+              $total_score = $row7['ts']/$row6['cnt'];
+            } else {
+              $total_score2 = 0;
+            }
+            ?>
           <li>
-            <a href="./store_detail.html">
-              <dl class="rec-container">
-                <dt>샤브20 상인점</dt>
-                <dd class="rec-content">평점 1.6</dd>
-                <dd class="rec-content">대구 동구</dd>
-                <dd class="like">
-                  <img class="like-icon1 active" src="../icon/like.png" alt="찜하기">
-                  <img class="like-icon2" src="../icon/liked.png" alt="찜하기">
-                </dd>
-              </dl>
-            </a>
-          </li>
+            <a href="./store_detail.html?store_idx=<?php echo $row['store_idx'];?>">
+              <dl class="rec-container" style="background: url('<?php echo $bg_image; ?>') no-repeat center/cover;">
+                <dt><?php echo $row['store_name']; ?></dt>
+                <dd class="rec-content">
+                  <img class="rating" src="../icon/star.png" alt="평점" style="width: 20px; height: 20px;">
+                  <span class="hidden">평점</span><?php echo round($total_score,1);?></dd>
+                <?php
+                $store_address = explode(' ', $row['store_address1']);
+                $store_address1 = $store_address[0];
+                $store_address2 = isset($store_address[1]) ? $store_address[1] : "";
+                ?>
+                <dd class="rec-content"><?php echo $store_address1; ?> &nbsp;<?php echo $store_address2; ?></dd>
 
-          <li>
-            <a href="./store_detail.html">
-              <dl class="rec-container">
-                <dt>샤브20 상인점</dt>
-                <dd class="rec-content">평점 1.6</dd>
-                <dd class="rec-content">대구 동구</dd>
                 <dd class="like">
-                  <img class="like-icon1 active" src="../icon/like.png" alt="찜하기">
-                  <img class="like-icon2" src="../icon/liked.png" alt="찜하기">
-                </dd>
-              </dl>
-            </a>
-          </li>
+                  <script>
+                    $(document).ready(function() {
+                      $("#like<?php echo $row['store_idx']; ?>").click(function() {
+                        $.ajax({
+                          type : 'post',
+                          url : 'store_like.html',
+                          data : {
+                            store_idx : "<?php echo $row['store_idx']; ?>",
+                            user_idx : "<?php echo $_COOKIE['user_idx']; ?>"
+                          },
+                          success : function(data) {
+                            if(data) {
+                              $(".like-icon1").hide();
+                              $(".like-icon2").show();
+                            };
+                          }
+                       });
+                      });
+                    });
+                  </script>
 
-          <li>
-            <a href="./store_detail.html">
-              <dl class="rec-container">
-                <dt>샤브20 상인점</dt>
-                <dd class="rec-content">평점 1.6</dd>
-                <dd class="rec-content">대구 동구</dd>
-                <dd class="like">
-                  <img class="like-icon1 active" src="../icon/like.png" alt="찜하기">
-                  <img class="like-icon2" src="../icon/liked.png" alt="찜하기">
+                  <?php
+                  $sql_store_like = "select * from store_like where store_idx='".$row['store_idx']."' and user_idx='".$_COOKIE['user_idx']."'";
+                  $result_store_like = mysqli_query($con, $sql_store_like);
+                  $row_num_store_like = mysqli_num_rows($result_store_like);
+                  ?>
+
+                  <?php if ($row_num_store_like > 0) {
+                  ?>
+                  <img class="like-icon1" id="like<?php echo $row['store_idx']; ?>" src="../icon/liked.png" alt="찜하기">
+                  <?php
+                  } else {
+                  ?>
+                  <img class="like-icon2" id="like<?php echo $row['store_idx']; ?>" src="../icon/like.png" alt="찜하기">
+                  <?php
+                  } 
+                  ?>
                 </dd>
               </dl>
             </a>
           </li>
-          <li>
-            <a href="./store_detail.html">
-              <dl class="rec-container">
-                <dt>샤브20 상인점</dt>
-                <dd class="rec-content">평점 1.6</dd>
-                <dd class="rec-content">대구 동구</dd>
-                <dd class="like">
-                  <img class="like-icon1 active" src="../icon/like.png" alt="찜하기">
-                  <img class="like-icon2" src="../icon/liked.png" alt="찜하기">
-                </dd>
-              </dl>
-            </a>
-          </li>
+          <?php } ?>
         </ul>
       </div>
     </section>
 
+    <?php
+    $sql1 = "select * from store order by store_idx desc limit 4";
+    $result1 = mysqli_query($con, $sql1);
+    ?>
     <section class="distance-section">
       <h2 class="title-container">주변 맛집 부수기</h2>
       <ul id="slider4">
         <li><a class="sub-title1" href="./search_result.html">내 주변</a></li>
-        <li><a class="sub-title1" href="./search_result.html">1km이내</a></li>
+        <li><a class="sub-title1" href="./search_result_dis.html?var1=<?php echo $_GET['var1'];?>&var2=<?php echo $_GET['var2'];?>">1km이내</a></li>
         <li><a class="sub-title1" href="./search_result.html">3km이내</a></li>
         <li><a class="sub-title1" href="./search_result.html">5km이내</a></li>
         <li><a class="sub-title1" href="./search_result.html">10km이내</a></li>
@@ -227,12 +272,37 @@ session_start();
 
       <div class="store-container" id="slider2">
         <ul>
+          <?php
+          while($row1 = mysqli_fetch_array($result1)){
+          $bg_image1 = "upload/" . $row1['file_copied_1'];
+
+          $sql2 = "select count(*) as cnt from review where store_idx='".$row1['store_idx']."'";
+          $result2 = mysqli_query($con, $sql2);
+          $row2 = mysqli_fetch_array($result2);
+
+          $sql3 = "select sum(review_score) as ts from review where store_idx='".$row1['store_idx']."'";
+          $result3 = mysqli_query($con, $sql3);
+          $row3 = mysqli_fetch_array($result3);
+
+          if ($row2['cnt'] !=0) {
+            $total_score = $row3['ts']/$row2['cnt'];
+          } else {
+            $total_score = 0;
+          }
+          ?>
           <li>
-            <a href="./store_detail.html">
-              <dl class="rec-container">
-                <dt>샤브20 상인점</dt>
-                <dd class="rec-content">평점 1.6</dd>
-                <dd class="rec-content">대구 동구</dd>
+            <a href="./store_detail.html?store_idx=<?php echo $row1['store_idx'];?>">
+              <dl class="rec-container" style="background: url('<?php echo $bg_image1; ?>') no-repeat center/cover;">
+                <dt><?php echo $row1['store_name'];?></dt>
+                <dd class="rec-content">
+                  <img class="rating" src="../icon/star.png" alt="평점" style="width: 20px; height: 20px;">
+                  <span class="hidden">평점</span><?php echo round($total_score,1);?></dd>
+                <?php
+                $store_address = explode(' ',$row1['store_address1']);
+                $store_address1 = $store_address[0];
+                $store_address2 = $store_address[1];
+                ?>
+                <dd class="rec-content"><?php echo $store_address1;?> &nbsp;<?php echo $store_address2;?></dd>
                 <dd class="like">
                   <img class="like-icon1 active" src="../icon/like.png" alt="찜하기">
                   <img class="like-icon2" src="../icon/liked.png" alt="찜하기">
@@ -240,45 +310,9 @@ session_start();
               </dl>
             </a>
           </li>
-          <li>
-            <a href="./store_detail.html">
-              <dl class="rec-container">
-                <dt>샤브20 상인점</dt>
-                <dd class="rec-content">평점 1.6</dd>
-                <dd class="rec-content">대구 동구</dd>
-                <dd class="like">
-                  <img class="like-icon1 active" src="../icon/like.png" alt="찜하기">
-                  <img class="like-icon2" src="../icon/liked.png" alt="찜하기">
-                </dd>
-              </dl>
-            </a>
-          </li>
-          <li>
-            <a href="./store_detail.html">
-              <dl class="rec-container">
-                <dt>샤브20 상인점</dt>
-                <dd class="rec-content">평점 1.6</dd>
-                <dd class="rec-content">대구 동구</dd>
-                <dd class="like">
-                  <img class="like-icon1 active" src="../icon/like.png" alt="찜하기">
-                  <img class="like-icon2" src="../icon/liked.png" alt="찜하기">
-                </dd>
-              </dl>
-            </a>
-          </li>
-          <li>
-            <a href="./store_detail.html">
-              <dl class="rec-container">
-                <dt>샤브20 상인점</dt>
-                <dd class="rec-content">평점 1.6</dd>
-                <dd class="rec-content">대구 동구</dd>
-                <dd class="like">
-                  <img class="like-icon1 active" src="../icon/like.png" alt="찜하기">
-                  <img class="like-icon2" src="../icon/liked.png" alt="찜하기">
-                </dd>
-              </dl>
-            </a>
-          </li>
+          <?php
+          }
+          ?>
         </ul>
       </div>
     </section>
@@ -304,6 +338,10 @@ session_start();
       </div>
     </section>
 
+    <?php
+    $sql2 = "select * from store order by store_idx desc limit 4";
+    $result2 = mysqli_query($con, $sql2);
+    ?>
     <section class="recomand-section">
       <div class="title-container">
         <div class="recomend-title">
@@ -314,12 +352,37 @@ session_start();
 
       <div class="store-container" id="slider3">
         <ul>
+          <?php
+          while($row2 = mysqli_fetch_array($result2)){
+          $bg_image2 = "upload/" . $row2['file_copied_1'];
+
+          $sql4 = "select count(*) as cnt from review where store_idx='".$row2['store_idx']."'";
+          $result4 = mysqli_query($con, $sql4);
+          $row4 = mysqli_fetch_array($result4);
+
+          $sql5 = "select sum(review_score) as ts from review where store_idx='".$row2['store_idx']."'";
+          $result5 = mysqli_query($con, $sql5);
+          $row5 = mysqli_fetch_array($result5);
+
+          if ($row4['cnt'] !=0) {
+            $total_score1 = $row5['ts']/$row4['cnt'];
+          } else {
+            $total_score1 = 0;
+          }
+          ?>
           <li>
-            <a href="./store_detail.html">
-              <dl class="rec-container">
-                <dt>샤브20 상인점</dt>
-                <dd class="rec-content">평점 1.6</dd>
-                <dd class="rec-content">대구 동구</dd>
+            <a href="./store_detail.html?store_idx=<?php echo $row2['store_idx'];?>">
+              <dl class="rec-container" style="background: url('<?php echo $bg_image2; ?>') no-repeat center/cover;">
+                <dt><?php echo $row2['store_name'];?></dt>
+                <dd class="rec-content">
+                  <img class="rating" src="../icon/star.png" alt="평점" style="width: 20px; height: 20px;">
+                  <span class="hidden">평점</span><?php echo round($total_score1,1);?></dd>
+                <?php
+                $store_address = explode(' ',$row2['store_address1']);
+                $store_address1 = $store_address[0];
+                $store_address2 = $store_address[1];
+                ?>
+                <dd class="rec-content"><?php echo $store_address1;?> &nbsp;<?php echo $store_address2;?></dd>
                 <dd class="like">
                   <img class="like-icon1 active" src="../icon/like.png" alt="찜하기">
                   <img class="like-icon2" src="../icon/liked.png" alt="찜하기">
@@ -327,45 +390,9 @@ session_start();
               </dl>
             </a>
           </li>
-          <li>
-            <a href="./store_detail.html">
-              <dl class="rec-container">
-                <dt>샤브20 상인점</dt>
-                <dd class="rec-content">평점 1.6</dd>
-                <dd class="rec-content">대구 동구</dd>
-                <dd class="like">
-                  <img class="like-icon1 active" src="../icon/like.png" alt="찜하기">
-                  <img class="like-icon2" src="../icon/liked.png" alt="찜하기">
-                </dd>
-              </dl>
-            </a>
-          </li>
-          <li>
-            <a href="./store_detail.html">
-              <dl class="rec-container">
-                <dt>샤브20 상인점</dt>
-                <dd class="rec-content">평점 1.6</dd>
-                <dd class="rec-content">대구 동구</dd>
-                <dd class="like">
-                  <img class="like-icon1 active" src="../icon/like.png" alt="찜하기">
-                  <img class="like-icon2" src="../icon/liked.png" alt="찜하기">
-                </dd>
-              </dl>
-            </a>
-          </li>
-          <li>
-            <a href="./store_detail.html">
-              <dl class="rec-container">
-                <dt>샤브20 상인점</dt>
-                <dd class="rec-content">평점 1.6</dd>
-                <dd class="rec-content">대구 동구</dd>
-                <dd class="like">
-                  <img class="like-icon1 active" src="../icon/like.png" alt="찜하기">
-                  <img class="like-icon2" src="../icon/liked.png" alt="찜하기">
-                </dd>
-              </dl>
-            </a>
-          </li>
+          <?php
+          }
+          ?>
         </ul>
       </div>
     </section>
@@ -397,7 +424,7 @@ session_start();
         <script>
           var swiper = new Swiper(".mySwiper", {
             slidesPerView: 1,
-            spaceBetween: 30,
+            spaceBetween: 0,
             loop: true,
             autoplay: true,
             pagination: {

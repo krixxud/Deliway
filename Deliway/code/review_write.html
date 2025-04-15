@@ -1,3 +1,16 @@
+<?php
+session_start();
+include "../config/db.php";
+
+$sql = "SELECT * FROM reser where reser_idx = '".$_GET['reser_idx']."'";
+$result = mysqli_query($con,$sql);
+$row = mysqli_fetch_array($result);
+
+$sql1 = "SELECT * FROM store where store_idx = '".$row['store_idx']."'";
+$result1 = mysqli_query($con,$sql1);
+$row1 = mysqli_fetch_array($result1);
+?>
+
 <!DOCTYPE html>
 <html lang="ko">
 
@@ -24,17 +37,20 @@
 
   <main>
     <section id="section">
-      <h2 class="sub-title2">제주 고씨 든렘지 레스토랑</h2>
+      <h2 class="sub-title2"><?php echo $row1['store_name'];?></h2>
 
-      <form>
+      <form method="post" action="./PHP/review_ok.php" enctype="multipart/form-data">
+        <input type="hidden" name="store_idx" value="<?php echo $row['store_idx'];?>">
+        <input type="hidden" name="reser_idx" value="<?php echo $_GET['reser_idx'];?>">
+        <input type="hidden" name="user_id" value="<?php echo $_COOKIE['user_id'];?>">
         <fieldset>
           <legend>방문 목적을 알려주세요</legend>
           <div class="btns">
-            <button type="button" class="tag" onclick="toggleSelection(event)">가족 외식</button>
-            <button type="button" class="tag" onclick="toggleSelection(event)">데이트</button>
-            <button type="button" class="tag" onclick="toggleSelection(event)">친구 모임</button>
-            <button type="button" class="tag" onclick="toggleSelection(event)">회식</button>
-            <button type="button" class="tag" onclick="toggleSelection(event)">혼밥</button>
+            <input type="checkbox" name="visit_opt1" value="1" class="tag">가족 외식
+            <input type="checkbox" name="visit_opt2" value="1" class="tag">데이트
+            <input type="checkbox" name="visit_opt3" value="1" class="tag">친구 모임
+            <input type="checkbox" name="visit_opt4" value="1" class="tag">회식
+            <input type="checkbox" name="visit_opt5" value="1" class="tag">혼밥
           </div>
         </fieldset>
 
@@ -94,56 +110,39 @@
           <label>사진 업로드</label>
           <div class="image-upload">
             <label for="review-image" class="image-upload-button"></label>
-            <input type="file" id="review-image" name="review-image" class="hidden" accept="image/*">
+            <input type="file" id="review-image" name="upfile[]" class="hidden" multiple max="5">
           </div>
         </div>
 
         <div class="review">
           <p class="score sub-title1">별점</p>
           <div class="star-rating">
-            <span onclick="setRating(1)">★</span>
-            <span onclick="setRating(2)">★</span>
-            <span onclick="setRating(3)">★</span>
-            <span onclick="setRating(4)">★</span>
-            <span onclick="setRating(5)">★</span>
-            <input type="hidden" id="rating" name="rating" value="0">
+            <select name="review_score">
+              <option value="5">★★★★★</option>
+              <option value="4">★★★★</option>
+              <option value="3">★★★</option>
+              <option value="2">★★</option>
+              <option value="1">★</option>
+            </select>
           </div>
         </div>
 
         <div class="input-group">
           <label for="title">제목</label>
-          <input type="text" id="title" name="title" required>
+          <input type="text" id="title" name="review_title" placeholder="제목을 입력하세요" required>
         </div>
 
         <div class="input-group">
           <label for="content">내용</label>
-          <textarea id="content" name="content" rows="10" placeholder="리뷰를 작성해주세요" required></textarea>
+          <textarea id="content" name="review_memo" rows="10" placeholder="리뷰를 작성해주세요" required></textarea>
         </div>
 
-        <button type="submit" onclick="showConfirmModal(event)">리뷰 등록하기</button>
+        <button type="submit">리뷰 등록하기</button>
       </form>
     </section>
   </main>
 
-  <div id="cautionModal" class="modal">
-    <div class="modal-content">
-      <p class="small">
-        정확하고 유익한 정보를 나누어 쾌적한 리뷰 문화를 경험할 수 있도록 아래
-        사항을 유의해주세요. <br><br><br>
-        1. 실제 방문 경험과 다르거나 확인되지 않은 내용을 작성하지 말아주세요. <br><br>
-        2. 다른 손님이나 직원의 모습이 동의 없이 포함되지 않도록 유의해 주세요. <br><br>
-        3. 비방, 모욕적인 표현 금지, 악의적인 비난, 무례한 언어, 인격을 침해하는 표현은 작성하지 말아주세요.
-      </p>
-      <button onclick="closeModal('cautionModal'); showCompletionModal()">확인</button>
-    </div>
-  </div>
 
-  <div id="completionModal" class="modal">
-    <div class="modal-content">
-      <p>리뷰등록이 완료되었습니다</p>
-      <button onclick="closeModal('completionModal'); window.location.href='./review_detail.html'">확인</button>
-    </div>
-  </div>
 </body>
 
 </html>

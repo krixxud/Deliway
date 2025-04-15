@@ -18,10 +18,11 @@ if(password_verify($user_pass, $hash_pass)){
 
         $_SESSION['user_id'] = $row['user_id'];
         $_SESSION['user_name'] = $row['user_name'];
-
+        $_SESSION['user_idx'] = $row['user_idx'];
+        
         $sql1 = "update member set user_login ='".$user_login."' where user_id = '".$user_id."'";
 
-        echo "<script>alert('로그인이 완료되었습니다.'); location.href='owner-dashboard.html'</script>";
+        echo "<script>alert('로그인이 완료되었습니다.'); location.href='owner_dashboard.html'</script>";
 }else{
     echo "<script>alert('아이디 또는 비밀번호가 틀렸습니다'); history.back();</script>";
 }

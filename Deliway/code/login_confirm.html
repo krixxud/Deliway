@@ -5,6 +5,11 @@ include "../config/db.php";
 $sql = "select * from member where user_id = '".$_GET['user_id']."'";
 $result = mysqli_query($con,$sql);
 $row = mysqli_fetch_array($result);
+
+setcookie("user_id", $row['user_id'], (time() + 3600 * 24 * 30000), "/" );
+setcookie("user_idx", $row['user_idx'], (time() + 3600 * 24 * 30000), "/" );
+setcookie("user_name", $row['user_name'], (time() + 3600 * 24 * 30000), "/" );
+setcookie("user_ing", $row['user_ing'], (time() + 3600 * 24 * 30000), "/" );
 ?>
 <!DOCTYPE html>
 <html lang="ko">
@@ -43,7 +48,7 @@ $row = mysqli_fetch_array($result);
                     <input class="login-placeholder" value="<?php echo $row['user_addr'];?>" type="text" readonly>
                 </label>
             </div>
-            <button type="button" class="next title" onclick = "window.location.href = 'login_email.html'" >로그인 바로가기</button>
+            <button type="button" class="next title" onclick = "window.location.href = 'main.html?user_id=<?php echo $row['user_id'];?>'" >델리웨이 시작하기</button>
         </form>
     </main>
 </body>

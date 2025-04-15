@@ -1,3 +1,13 @@
+<?php
+session_start();
+include "../config/db.php";
+
+$store_idx = $_GET['store_idx'];
+$sql = "select * from store where store_idx='".$store_idx."'";
+$result = mysqli_query($con, $sql);
+$row = mysqli_fetch_array($result);
+?>
+
 <!DOCTYPE html>
 <html lang="ko">
 
@@ -23,110 +33,198 @@
 </head>
 
 <body>
-  <header>
-    <h1 class="title">제주 고씨 든렘지 레스토랑</h1>
-    <a href="#" class="back" onclick="goBack(event)"><i class="fa fa-angle-left" aria-hidden="true"
-        style="color: black;"></i>
-      <span class="hidden">뒤로가기</span></a>
-  </header>
 
-  <main>
-    <section class="reser-section">
-      <h2>예약 정보</h2>
-      <div class="container">
-        <!-- Flatpickr 버튼 -->
-        <div class="dateAndTime">
-          <label for="datetimePicker">
-            <img src="../icon/reservation.png" alt="예약 아이콘">
-            <span>예약일시</span>
-          </label>
-          <input type="text" id="datetimePicker" class="hidden-input" aria-describedby="selectedDateTime">
-          <button class="flatpickr-button" id="openPicker" type="button">선택하기</button>
+  <form method="post" action="./PHP/reser_ok.php">
+    <input type="hidden" name="user_id" value="<?php echo $_COOKIE['user_id'];?>">
+    <input type="hidden" name="store_idx" value="<?php echo $store_idx?>">
+    <input type="hidden" name="reser_ing" value="예약신청">
+    <header>
+      <h1 class="title">
+        <?php echo $row['store_name'];?>
+      </h1>
+      <a href="#" class="back" onclick="goBack(event)"><i class="fa fa-angle-left" aria-hidden="true"
+          style="color: black;"></i>
+        <span class="hidden">뒤로가기</span></a>
+    </header>
+
+    <main>
+      <section class="reser-section">
+        <h2>예약 정보</h2>
+        <div class="container">
+          <!-- Flatpickr 버튼 -->
+          <div class="dateAndTime">
+            <div class="date_row">
+              <label for="datetimePicker" class="datetimePicker">
+                <img src="../icon/reservation.png" alt="예약 아이콘">
+                <span>예약일시</span>
+              </label>
+              <button type="button" id="openModalBtn" class="flatpickr-button">예약하기</button>
+            </div>
+            <div id="reservationModal" style="display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%; background-color: rgba(0,0,0,0.5);">
+              <div style="position: relative; width: 300px; margin: 250px auto; padding: 20px; background: white; border-radius: 8px;">
+                <label for="modalDateTime">예약 날짜와 시간 선택:</label>
+                <input type="datetime-local" id="modalDateTime">
+                <div style="margin-top: 10px;">
+                  <button type="button" id="submitDateBtn">확인</button>
+                  <button type="button" id="closeModalBtn">닫기</button>
+                </div>
+              </div>
+            </div>
+
+            <input type="datetime-local" name="reser_day" class="hidden-input" min="<?php echo $row['store_weekday1'];?>" max="<?php echo $row['store_weekday2'];?>">
+            <!-- <input type="date" id="datetimePicker" name="reser_day" class="hidden-input"
+              aria-describedby="selectedDateTime">
+            <button class="flatpickr-button" id="openPicker" type="button">선택하기</button>
+          </div>
+          <button id="confirmDate" class="confirm-btn" style="display: none;">확인</button> -->
+
+          <div class="modal-overlay" id="modalOverlay"></div>
+
+          <!-- 날짜 나오는 부분 -->
+          <p class="date-display">
+            <span id="selectedDateTime">날짜와 시간을 선택해주세요</span>
+          </p>
         </div>
-        <button id="confirmDate" class="confirm-btn" style="display: none;">확인</button>
 
-        <div class="modal-overlay" id="modalOverlay"></div>
+        <label for="user-name"><img src="../icon/user.png" alt=""><span>예약자</span></label>
+        <input type="text" id="user-name" name="reser_name" placeholder="이름을 입력해주세요"
+          value="<?php echo $_COOKIE['user_name'];?>">
 
-        <!-- 날짜 나오는 부분 -->
-        <p class="date-display">
-          <span id="selectedDateTime">날짜와 시간을 선택해주세요</span>
-        </p>
-      </div>
-
-      <label for="user-name"><img src="../icon/user.png" alt=""><span>예약자</span></label>
-      <input type="text" id="user-name" placeholder="이름을 입력해주세요">
-
-      <label class="user-count" for="user-count"><img src="../icon/people.png" alt=""><span>예약인원</span></label>
-      <input type="number" id="user-count">
+        <label class="user-count" for="user-count"><img src="../icon/people.png" alt=""><span>예약인원</span></label>
+        <input type="number" id="user-count" name="reser_number">
 
 
 
-      <label for="request-box"><i class="fa-solid fa-pen-to-square square"></i><span>요청사항</span></label>
-      <textarea id="request-box" maxlength="100" placeholder="100자 내로 작성해주세요"></textarea>
+        <label for="request-box"><i class="fa-solid fa-pen-to-square square"></i><span>요청사항</span></label>
+        <textarea id="request-box" name="reser_memo" maxlength="100" placeholder="100자 내로 작성해주세요"></textarea>
 
-      <label for="usePickup" class="pickup-title">
-        <img src="../icon/car.png" alt="픽업 서비스 아이콘"> 픽업 서비스 이용
-        <input type="checkbox" id="usePickup">
-      </label>
+        <label for="usePickup" class="pickup-title">
+          <img src="../icon/car.png" alt="픽업 서비스 아이콘"> 픽업 서비스 이용
+          <input type="checkbox" id="usePickup" name="reser_pickup" value="1">
+        </label>
 
 
 
-      <div id="pickupLocationContainer" style="display: none;">
-        <label for="pickupLocation"><img src="../icon/car.png" alt="">탑승 장소</label>
-        <input type="text" id="pickupLocation" placeholder="탑승 장소를 입력하세요">
-      </div>
-    </section>
-    <script>
-      const usePickup = document.getElementById("usePickup");
-      const pickupLocationContainer = document.getElementById("pickupLocationContainer");
+        <div id="pickupLocationContainer" style="display: none;">
+          <label for="pickupLocation"><img src="../icon/car.png" alt="">탑승 장소</label>
+          <input type="text" id="pickupLocation" name="reser_place" placeholder="탑승 장소를 입력하세요">
+        </div>
+      </section>
+      <script>
+        const usePickup = document.getElementById("usePickup");
+        const pickupLocationContainer = document.getElementById("pickupLocationContainer");
 
-      usePickup.addEventListener("change", () => {
-        if (usePickup.checked) {
-          pickupLocationContainer.style.display = "block";// 체크하면 입력창 표시
-        } else {
-          pickupLocationContainer.style.display = "none";// 체크 해제하면 입력창 숨김
-        }
+        usePickup.addEventListener("change", () => {
+          if (usePickup.checked) {
+            pickupLocationContainer.style.display = "block";// 체크하면 입력창 표시
+          } else {
+            pickupLocationContainer.style.display = "none";// 체크 해제하면 입력창 숨김
+          }
+        });
+
+        const openModalBtn = document.getElementById('openModalBtn');
+        const reservationModal = document.getElementById('reservationModal');
+        const closeModalBtn = document.getElementById('closeModalBtn');
+        const submitDateBtn = document.getElementById('submitDateBtn');
+        const dateTimeInput = document.getElementById('modalDateTime');
+        const selectedDateTime = document.getElementById('selectedDateTime');
+
+        openModalBtn.addEventListener('click', () => {
+          reservationModal.style.display = 'block';
+        });
+
+        closeModalBtn.addEventListener('click', () => {
+          reservationModal.style.display = 'none';
+        });
+
+        submitDateBtn.addEventListener('click', () => {
+        const rawValue = dateTimeInput.value; // "2025-04-16T13:13"
+        const formattedValue = rawValue.replace("T", " "); // "2025-04-16 13:13"
+
+        selectedDateTime.innerText = formattedValue; // 사용자 표시용
+        document.querySelector('input[name="reser_day"]').value = rawValue; // DB 전송용은 원래 형식 유지
+
+        reservationModal.style.display = 'none';
       });
-    </script>
-    <!-- 오시는 길 -->
-    <section class="map-section">
-      <h2>오시는 길</h2>
-      <div class="map">
-        <iframe
-          src="https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d3165.3350067188517!2d127.03155294984232!3d37.50001615612253!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x357ca3fe3854fd13%3A0xdbb2d70b1648d2ce!2z6rWs6riA7L2U66as7JWEIOuzuOyCrA!5e0!3m2!1sko!2skr!4v1740631602548!5m2!1sko!2skr"
-          width="600" height="450" style="border: 0" allowfullscreen="" loading="lazy"
-          referrerpolicy="no-referrer-when-downgrade"></iframe>
-      </div>
-      <div class="store-location">
-        <div class="location-text">
-          <div class="gps"></div>
-          <p>가게의 위치가 나오는 영영</p>
-        </div>
-        <button>
-          <i class="fa-regular fa-copy"><span class="hidden">복사</span></i>
-        </button>
-      </div>
-      <!-- 지하철 넘버 -->
-      <div class="subway-container">
-        <div class="subway">
-          <div class="subway-1"></div>
-          <div class="subway-2"></div>
-          <p>서면역에서 352KM</p>
-        </div>
-        <div class="subway">
-          <div class="subway-1"></div>
-          <p>부암역에서 32KM</p>
-        </div>
-      </div>
+      </script>
+      <!-- 오시는 길 -->
+      <section class="map-section">
+        <h2>오시는 길</h2>
+        <div id="map" style="width:100%; height:250px; margin: 20px 0 10px; border-radius: 10px;"></div>
 
-      <a href="#"><i class="fa-solid fa-paper-plane"></i><span>길찾기</span></a>
-    </section>
+        <script type="text/javascript"
+          src="//dapi.kakao.com/v2/maps/sdk.js?appkey=455d961c1f12d1c88656c0214f20de9f&libraries=services"></script>
+        <script>
+          var mapContainer = document.getElementById('map'), // 지도를 표시할 div 
+            mapOption = {
+              center: new kakao.maps.LatLng(33.450701, 126.570667), // 지도의 중심좌표
+              level: 3 // 지도의 확대 레벨
+            };
 
-    <div id="do-reser">
-      <ul>
-        <li><button onclick="showCompletionModal(event)" style="color:white">예약하기</button></li>
-      </ul>
-    </div>
+          // 지도를 생성합니다    
+          var map = new kakao.maps.Map(mapContainer, mapOption);
+
+          // 주소-좌표 변환 객체를 생성합니다
+          var geocoder = new kakao.maps.services.Geocoder();
+
+          // 주소로 좌표를 검색합니다
+          geocoder.addressSearch('<?php echo $row['store_address1']?>', function (result, status) {
+
+            // 정상적으로 검색이 완료됐으면 
+            if (status === kakao.maps.services.Status.OK) {
+
+              var coords = new kakao.maps.LatLng(result[0].y, result[0].x);
+
+              // 결과값으로 받은 위치를 마커로 표시합니다
+              var marker = new kakao.maps.Marker({
+                map: map,
+                position: coords
+              });
+
+              // 인포윈도우로 장소에 대한 설명을 표시합니다
+              var infowindow = new kakao.maps.InfoWindow({
+                content: '<div style="width:150px;text-align:center;padding:6px 0;"><?php echo $row['store_name'];?></div>'
+              });
+              infowindow.open(map, marker);
+
+              // 지도의 중심을 결과값으로 받은 위치로 이동시킵니다
+              map.setCenter(coords);
+            }
+          });    
+        </script>
+        <div class="store-location">
+          <div class="location-text">
+            <div class="gps"></div>
+            <p>
+              <?php echo $row['store_address1']?>
+            </p>
+          </div>
+          <button>
+            <i class="fa-regular fa-copy"><span class="hidden">복사</span></i>
+          </button>
+        </div>
+        <!-- 지하철 넘버 -->
+        <div class="subway-container">
+          <div class="subway">
+            <div class="subway-1"></div>
+            <div class="subway-2"></div>
+            <p>서면역에서 352KM</p>
+          </div>
+          <div class="subway">
+            <div class="subway-1"></div>
+            <p>부암역에서 32KM</p>
+          </div>
+        </div>
+
+        <a href="#"><i class="fa-solid fa-paper-plane"></i><span>길찾기</span></a>
+      </section>
+
+      <div id="do-reser">
+        <ul>
+          <li><button type="submit" onclick="showCompletionModal(event)" style="color:white">예약하기</button></li>
+        </ul>
+      </div>
+  </form>
   </main>
 
   <footer>

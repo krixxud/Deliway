@@ -1,0 +1,274 @@
+<?php
+session_start();
+include "../config/db.php";
+
+if(isset($_GET['page'])){
+	$page = $_GET['page'];
+	} else {
+	$page = 1; //페이지
+}
+
+$list = 2; //한 페이지에 나오는 갯수
+$block_ct = 2; //블록당 보여줄 페이지 수
+
+$block_num = ceil($page/$block_ct); //현재 페이지 블록
+$block_start = (($block_num - 1) * $block_ct) + 1; //블록 시작번호
+$block_end = $block_start + $block_ct -1; //블록 마지막 번호
+
+?>
+
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>예약 관리 - 맛집 플랫폼 관리자</title>
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/remixicon/3.5.0/remixicon.min.css" rel="stylesheet">
+    <link rel="stylesheet" href="./css/manager-common.css">
+    <link rel="stylesheet" href="./css/manager-reser.css">
+    <script src="./js/manager-common.js" defer></script>
+    <script src="./js/manager-reservation.js" defer></script>
+</head>
+<body>
+    <aside class="sidebar">
+        <div class="logo">맛집관리</div>
+        <ul class="nav-menu">
+            <li class="nav-item">
+                <a href="./manager-dashboard.html" class="nav-link">
+                    <i class="fas fa-home"></i>
+                    <span>대시보드</span>
+                </a>
+            </li>
+            <li class="nav-item">
+                <a href="./manager-store.html" class="nav-link">
+                    <i class="fas fa-utensils"></i>
+                    <span>식당 관리</span>
+                </a>
+            </li>
+            <li class="nav-item">
+                <a href="./manager-user.html" class="nav-link">
+                    <i class="fas fa-users"></i>
+                    <span>회원 관리</span>
+                </a>
+            </li>
+            <li class="nav-item">
+                <a href="./manager-reser.html" class="nav-link active">
+                    <i class="fas fa-calendar-alt"></i>
+                    <span>예약 관리</span>
+                </a>
+            </li>
+            <li class="nav-item">
+                <a href="./manager-statistics.html" class="nav-link">
+                    <i class="fas fa-chart-bar"></i>
+                    <span>통계</span>
+                </a>
+            </li>
+            <li class="nav-item">
+                <a href="./manager-setting.html" class="nav-link">
+                    <i class="fas fa-cog"></i>
+                    <span>설정</span>
+                </a>
+            </li>
+            <li class="nav-item">
+                <a href="./logout.php" class="nav-link">
+                    <i class="ri-logout-box-r-line"></i>
+                    로그아웃
+                </a>
+            </li>
+        </ul>
+    </aside>
+
+    <div class="main-content">
+        <!-- 검색 섹션 -->
+        <div class="search-section">
+            <form class="search-form">
+                <div class="form-group">
+                    <label for="search">예약자명</label>
+                    <input type="text" id="search" placeholder="예약자명, 식당명, 예약 날짜">
+                </div>
+                <div class="form-group">
+                    <label for="restaurant">식당명</label>
+                    <input type="text" id="restaurant" placeholder="식당명">
+                </div>
+                <div class="form-group">
+                    <label for="reservation-date">예약 날짜</label>
+                    <input type="date" id="reservation-date">
+                </div>
+                <div class="form-group">
+                    <button type="submit" class="btn btn-primary">
+                        <i class="fas fa-search"></i>
+                        검색
+                    </button>
+                </div>
+            </form>
+        </div>
+
+        <?php
+        $sql_reser = "SELECT COUNT(*) as cnt FROM reser WHERE reser_ing = '예약확정' or reser_ing = '예약신청'";
+        $result_reser = mysqli_query($con, $sql_reser);
+        $row_reser = mysqli_fetch_array($result_reser);
+        ?>
+        <!-- 예약 통계 -->
+        <div class="stat-cards">
+            <div class="stat-card">
+                <div class="stat-card-title">총 예약 수</div>
+                <div class="stat-card-value"><?php echo $row_reser['cnt'];?></div>
+            </div>
+
+        <?php
+        $sql_reser_ok = "SELECT COUNT(*) as cnt1 FROM reser WHERE reser_ing = '예약확정'";
+        $result_reser_ok = mysqli_query($con, $sql_reser_ok);
+        $row_reser_ok = mysqli_fetch_array($result_reser_ok);
+        ?>
+
+            <div class="stat-card">
+                <div class="stat-card-title">총 확정 예약 수</div>
+                <div class="stat-card-value"><?php echo $row_reser_ok['cnt1'];?></div>
+            </div>
+
+            <?php
+            $date = date("Y-m-d 00:00:00");
+            $date1 = date("Y-m-d 23:59:59");
+            
+            // 오늘 예약 총 수
+            $sql_today_count = "SELECT COUNT(*) as cnt FROM reser WHERE (reser_wdate >= '".$date."' AND reser_wdate <= '".$date1."') AND (reser_ing = '예약확정' OR reser_ing = '예약신청')";
+            $result_today_count = mysqli_query($con, $sql_today_count);
+            $row_today_count = mysqli_fetch_array($result_today_count);
+            $total_today_count = $row_today_count['cnt'];
+
+            $start_num = ($page-1) * $list; // 시작번호에서 리스트를 곱함
+
+            // 실제 예약 데이터 쿼리
+            $sql_today = "SELECT * FROM reser WHERE (reser_wdate >= '".$date."' AND reser_wdate <= '".$date1."') AND (reser_ing = '예약확정' OR reser_ing = '예약신청') ORDER BY reser_idx DESC LIMIT $start_num, $list";
+            $result_today = mysqli_query($con, $sql_today);
+
+            $total_page = ceil($total_today_count / $list);
+            if ($block_end > $total_page) $block_end = $total_page;
+            $total_block = ceil($total_page / $block_ct); // 수정된 블록 총 갯수
+            $number = $total_today_count - $start_num;
+            ?>
+            <div class="stat-card">
+                <div class="stat-card-title">오늘의 예약</div>
+                <div class="stat-card-value"><?php echo $total_today_count;?></div>
+            </div>
+        </div>
+
+        <!-- 예약 목록 -->
+        <div class="reservation-list">
+            <div class="list-header">
+                <h2 class="list-title">예약 목록</h2>
+                <button class="btn btn-secondary">
+                    <i class="fas fa-download"></i>
+                    엑셀 다운로드
+                </button>
+            </div>
+            
+            <div class="reservation-table-container">
+                <table class="reservation-list-table">
+                    <thead>
+                        <tr>
+                            <th>번호</th>
+                            <th>예약자</th>
+                            <th>식당명</th>
+                            <th>예약일</th>
+                            <th>예약시간</th>
+                            <th>인원</th>
+                            <th>관리</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <?php
+                        while ($row_today = mysqli_fetch_array($result_today)) { ?>
+                            <?php
+
+                            $store_idx = $row_today['store_idx'];
+
+                            $sql_store = "SELECT * FROM store WHERE store_idx='".$store_idx."'";
+                            $result_store = mysqli_query($con, $sql_store);
+                            $row_store = mysqli_fetch_array($result_store);
+                            ?>
+                        <tr>
+                            <td class="reservator-name"><?php echo $number;?></td>
+                            <td class="reservator-name"><?php echo $row_today['reser_name'];?></td>
+                            <td class="restaurant-name"><?php echo $row_store['store_name'];?></td>
+                            <td class="reservation-date"><?php echo date("Y-m-d", strtotime($row_today['reser_day']));?></td>
+                            <td class="reservation-time"><?php echo date("H:i", strtotime($row_today['reser_day']));?></td>
+                            <td class="reservation-people"><?php echo $row_today['reser_number'];?>인</td>
+                            <td class="reservation-actions">
+                                <button class="btn btn-primary btn-view-detail">상세보기</button>
+                                <button class="btn btn-warning btn-cancel-reservation">예약 취소</button>
+                            </td>
+                            <?php 
+                            $number--;
+                            } ?>
+                    </tbody>
+                </table>
+            </div>
+
+            <!-- 페이지네이션 -->
+            <div class="pagination">
+                <?php
+                if($page <= 1){
+                ?>
+                    <a class="page-btn"><i class="fas fa-angle-double-left"></i></a>
+                <?php
+                } else {
+                ?>
+                    <a href="?page=1" class="page-btn"><i class="fas fa-angle-double-left"></i></a>
+                <?php
+                }
+                ?>
+                <?php if($page <= 1) { ?>
+                    <a class="page-btn"><i class="fas fa-angle-left"></i></a>
+                <?php
+                } else {
+                    $pre = $page - 1;
+                ?>
+                    <a href="?page=<?php echo $pre; ?>" class="page-btn"><i class="fas fa-angle-left"></i></a>
+                <?php
+                }
+                ?>
+                <?php
+                for($i = $block_start; $i <= $block_end; $i++){
+                    if($page == $i){
+                ?>
+                <button href="#" class="page-btn active"><?php echo $i; ?></button>
+                <?php
+                } else {
+                ?>
+                    <a href="?page=<?php echo $i; ?>" class="page-btn"><?php echo $i; ?></a>
+                    <?php
+                    }
+                    ?>
+                <?php
+                }
+                ?>
+                <?php
+                if($page >= $total_page){
+                ?>
+                    <a class="page-btn"><i class="fas fa-angle-right"></i></a>
+                    <?php
+                } else {
+                    $next = $page + 1;
+                ?>
+                    <a href="?page=<?php echo $next; ?>" class="page-btn"><i class="fas fa-angle-right"></i></a>
+                <?php
+                }
+                ?>
+                <?php
+                if($block_num >= $total_block){
+                ?>
+                    <a class="page-btn"><i class="fas fa-angle-double-right"></i></a>
+                <?php
+                } else {
+                ?>
+                    <a href="?page=<?php echo $total_page; ?>" class="page-btn"><i class="fas fa-angle-double-right"></i></a>
+                <?php
+                }
+                ?>
+            </div>
+        </div>
+    </div>
+</body>
+</html>

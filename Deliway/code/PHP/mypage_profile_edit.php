@@ -4,7 +4,7 @@ session_start();
 include "../../config/db.php";
 
 $user_name = $_POST['user_name'];
-$user_intro = $_POST['user_intro'];
+$user_intro = $_POST['editor1'];
 
 $files = $_FILES["upfile"];
 	$count = count($files["name"]);

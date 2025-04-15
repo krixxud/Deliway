@@ -1,0 +1,24 @@
+<?php
+session_start();
+include "../config/db.php";
+
+$store_idx = $_POST ['store_idx'];
+$user_idx = $_POST ['user_idx'];
+
+$sql = "select * from store_like where user_idx='".$user_idx."' and store_idx='".$store_idx."'";
+$result = mysqli_query($con, $sql);
+$row_num = mysqli_fetch_array($result);
+
+if ($row_num > 0) {
+    $sql1 = "delete from store_like where user_idx='".$user_idx."' and store_idx='".$store_idx."'";
+    mysqli_query($con, $sql1);
+
+    echo "<img class="like-icon2 like<?php echo $row['store_idx']; ?>" src="../icon/like.png" alt="찜취소">";
+} else {
+    $sql1 = "insert into store_like (user_idx, store_idx) values ('".$user_idx."','".$store_idx."')";
+    mysqli_query($con, $sql1);
+    
+    echo "<img class="like-icon2 like<?php echo $row['store_idx']; ?>" src="../icon/liked.png" alt="찜하기">";
+}
+
+?>

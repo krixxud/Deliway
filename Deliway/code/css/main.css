@@ -6,7 +6,7 @@
 }
 
 body {
-  padding-bottom: 150px;
+  padding-bottom: 100px;
   overflow-x: hidden;
   max-width: 440px;
 }
@@ -144,7 +144,7 @@ main {
   display: flex;
   align-items: center;
   gap: var(--gap-size);
-  padding: var(--padding-default);
+  padding: 10px var(--padding-default);
   overflow: scroll;
 }
 
@@ -156,8 +156,8 @@ main {
   color: white;
   border-radius: 10px;
   position: relative;
-  background: url("../../images/pexels-othmane-ettalbi-2148497459-30374243.jpg")
-    no-repeat center / cover;
+  /* background: url("../../images/pexels-othmane-ettalbi-2148497459-30374243.jpg")
+    no-repeat center / cover; */
 }
 
 dd {

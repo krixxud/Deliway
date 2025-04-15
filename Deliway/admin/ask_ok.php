@@ -82,6 +82,7 @@ $files = $_FILES["upfile"];
 $sql = "INSERT INTO store (user_id, store_name, store_call, store_address1, store_memo, file_name_0, file_name_1, file_copied_0, file_copied_1, store_ing)
         values ('".$user_id."', '".$store_name."', '".$store_call."', '".$store_address1."', '".$store_memo."', '".$upfile_name[0]."', '".$upfile_name[1]."', '".$copied_file_name[0]."', '".$copied_file_name[1]."', '".$store_ing."')";
 
+
 mysqli_query($con,$sql);
 
 ?>

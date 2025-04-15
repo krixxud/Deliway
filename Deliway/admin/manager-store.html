@@ -2,26 +2,49 @@
 session_start();
 include "../config/db.php";
 
-$sql = "select * from store";
-$result = mysqli_query($con,$sql);
-$row_num = mysqli_num_rows($result); //갯수파악 구문
-?>
+if(isset($_GET['page'])){
+	$page = $_GET['page'];
+	} else {
+	$page = 1; //페이지
+}
 
+$sql = "SELECT * FROM store";
+$result = mysqli_query($con,$sql);
+$row_num = mysqli_num_rows($result);
+
+$list = 3; //한 페이지에 나오는 갯수
+$block_ct = 3; //블록당 보여줄 페이지 수
+
+$block_num = ceil($page/$block_ct); //현재 페이지 블록
+$block_start = (($block_num - 1) * $block_ct) + 1; //블록 시작번호
+$block_end = $block_start + $block_ct -1; //블록 마지막 번호
+
+$total_page = ceil($row_num / $list); //페이지 총 수
+if($block_end > $total_page) $block_end = $total_page;
+$total_block = ceil($total_page); // 블록 총 갯수
+$start_num = ($page-1) * $list; // 시작번호에서 리스트를 곱함
+
+$idNumber = $row_num - ($page-1) * $total_page;
+$number = $row_num - $start_num;
+
+?>
 <!DOCTYPE html>
 <html lang="ko">
+
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>식당 관리 - 맛집 플랫폼 관리자</title>
     <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/remixicon/3.5.0/remixicon.min.css" rel="stylesheet">
     <link rel="stylesheet" href="./css/manager-common.css">
     <link rel="stylesheet" href="./css/manager-store.css">
     <script src="./js/manager-common.js" defer></script>
-    <script src="./js/manager-store.js" defer></script>
 </head>
+
 <body>
     <aside class="sidebar">
-        <div class="logo">맛집관리</div>
+        <div class="logo">델리웨이</div>
         <ul class="nav-menu">
             <li class="nav-item">
                 <a href="./manager-dashboard.html" class="nav-link">
@@ -42,9 +65,9 @@ $row_num = mysqli_num_rows($result); //갯수파악 구문
                 </a>
             </li>
             <li class="nav-item">
-                <a href="./manager-review.html" class="nav-link">
-                    <i class="fas fa-star"></i>
-                    <span>리뷰 관리</span>
+                <a href="./manager-reser.html" class="nav-link">
+                    <i class="fas fa-calendar-alt"></i>
+                    <span>예약 관리</span>
                 </a>
             </li>
             <li class="nav-item">
@@ -59,44 +82,34 @@ $row_num = mysqli_num_rows($result); //갯수파악 구문
                     <span>설정</span>
                 </a>
             </li>
+            <li class="nav-item">
+                <a href="./logout.php" class="nav-link">
+                    <i class="ri-logout-box-r-line"></i>
+                    <span>로그아웃</span>
+                </a>
+            </li>
         </ul>
     </aside>
 
     <!-- 메인 컨텐츠 -->
-    <div class="main-content">
-
+    <section class="main-content">
         <!-- 검색/필터 섹션 -->
         <div class="search-section">
-            <form class="search-form">
+            <form method="POST" action="store-search.html" class="search-form">
                 <div class="form-group">
-                    <label for="search">검색어</label>
-                    <input type="text" id="search" placeholder="식당명 또는 주소 검색">
-                </div>
-                <div class="form-group">
-                    <label for="category">카테고리</label>
-                    <select id="category">
-                        <option value="">전체</option>
-                        <option value="korean">한식</option>
-                        <option value="japanese">일식</option>
-                        <option value="chinese">중식</option>
-                        <option value="western">양식</option>
+                    <label for="search">필터</label>
+                    <select name="search" id="search">
+                        <option value="store_name">업체명으로 찾기</option>
+                        <option value="store_call">매장 연락처로 찾기</option>
                     </select>
                 </div>
                 <div class="form-group">
-                    <label for="status">상태</label>
-                    <select id="status">
-                        <option value="">전체</option>
-                        <option value="pending">승인대기</option>
-                        <option value="approved">승인완료</option>
-                        <option value="rejected">승인거절</option>
-                    </select>
+                    <label for="search">검색어 입력</label>
+                    <input type="text" name="searchstring">
                 </div>
                 <div class="form-group">
-                    <label>&nbsp;</label>
-                    <button type="submit" class="btn btn-primary">
-                        <i class="fas fa-search"></i>
-                        검색
-                    </button>
+                    <label for="">&nbsp;</label>
+                    <button type="submit" class="btn btn-primary searchBtn"><i class="fas fa-search"></i>검색</button>
                 </div>
             </form>
         </div>
@@ -105,11 +118,14 @@ $row_num = mysqli_num_rows($result); //갯수파악 구문
         <div class="restaurant-table">
             <div class="table-header">
                 <h2>식당 목록</h2>
-                <p>총 등록된 업체는 <?php echo $row_num;?> 개 입니다.</p>
                 <div class="btn-group">
                     <button class="btn btn-secondary">
                         <i class="fas fa-download"></i>
                         엑셀 다운로드
+                    </button>
+                    <button class="btn btn-primary">
+                        <i class="fas fa-plus"></i>
+                        새 식당 등록
                     </button>
                 </div>
             </div>
@@ -119,65 +135,129 @@ $row_num = mysqli_num_rows($result); //갯수파악 구문
                         <th>
                             <input type="checkbox">
                         </th>
-                        <th>업체명</th>
+                        <th>번호</th>
+                        <th>식당명</th>
                         <th>카테고리</th>
                         <th>주소</th>
                         <th>연락처</th>
                         <th>등록일</th>
                         <th>상태</th>
-                        <th>관리</th>
-                    </tr>
-                    <?php
-                    if ($row_num =="") {
-                    ?>
-                    <tr>
-                        <td>등록된 업체정보가 없습니다.</td>
                     </tr>
                 </thead>
                 <tbody>
+                    <?php
+                    if($row_num == ""){
+                    ?>
+                    <tr>
+                        <td>등록된 업체정보가 없습니다.</td>
+                        <td></td>
+                        <td></td>
+                        <td></td>
+                        <td></td>
+                        <td></td>
+                        <td></td>
+                    </tr>
                     <tr>
                     <?php
                     } else {
-                    $sql1 = "select * from store order by store_idx desc"; // 등록된 정보의 최근 순
-                    $result1 = mysqli_query($con,$sql1);
-                    while($row1 = mysqli_fetch_array($result1)){;
-                    ?>
+                        $sql1 = "SELECT * FROM store ORDER BY store_idx DESC limit $start_num, $list";
+                        $result1 = mysqli_query($con,$sql1);
+                        $row_num = mysqli_num_rows($result1);
+                        while($row1 = mysqli_fetch_array($result1)){
+                        ?>
+                    </tr>
+                    <tr>
                         <td>
                             <input type="checkbox">
                         </td>
-                        <td><a href="store_detail.html?store_idx=<?php echo $row1['store_idx'];?>"><?php echo $row1['store_name']?></a></td>
-                        <td><?php echo $row1['store_opt']?></td>
-                        <td><?php echo $row1['store_address1']?></td>
-                        <td><?php echo $row1['store_call']?></td>
-                        <td><?php echo $row1['store_wdate']?></td>
-                        <td><a href="store_ok.html?store_idx=<?php echo $row1['store_idx'];?>&user_id=<?php echo $row1['user_id'];?>"><span class="badge badge-pending"><?php echo $row1['store_ing'];?></span></a></td>
+                        <td><?php echo $number; ?></td>
+                        <td><a href="store_detail.html?store_idx=<?php echo $row1['store_idx'];?>&page=<?php echo $page?>"><?php echo $row1['store_name'];?></a></td>
                         <td>
-                            <button class="btn btn-primary">수정</button>
-                            <button class="btn btn-danger">삭제</button>
+                            <?php echo $row1['store_category'];?>
+                        </td>
+                        <td><?php echo mb_substr($row1['store_address1'],0,6);?></td>
+                        <td><?php echo $row1['store_call'];?></td>
+                        <td><?php echo $row1['store_wdate'];?></td>
+                        <td>
+                            <a href="store_ok.html?store_idx=<?php echo $row1['store_idx'];?>&user_id=<?php echo $row1['user_id'];?>&page=<?php echo $page?>" class="status
+                                <?php
+                                if ($row1['store_ing'] == '승인') echo ' approved';
+                                else if ($row1['store_ing'] == '승인 대기') echo ' pending';
+                                else if ($row1['store_ing'] == '반려') echo ' rejected';
+                                ?>">
+                                <?php echo $row1['store_ing'];?>
+                            </a>
                         </td>
                     </tr>
                     <?php
-                    }
-                    ?>
-                    <?php
-                }
-                ?>
+                    $number--;
+                    } ?>
+                    <?php } ?>
                 </tbody>
             </table>
 
             <!-- 페이지네이션 -->
             <div class="pagination">
-                <button class="page-btn"><i class="fas fa-angle-double-left"></i></button>
-                <button class="page-btn"><i class="fas fa-angle-left"></i></button>
-                <button class="page-btn active">1</button>
-                <button class="page-btn">2</button>
-                <button class="page-btn">3</button>
-                <button class="page-btn">4</button>
-                <button class="page-btn">5</button>
-                <button class="page-btn"><i class="fas fa-angle-right"></i></button>
-                <button class="page-btn"><i class="fas fa-angle-double-right"></i></button>
+                <?php
+                if($page <= 1){
+                ?>
+                    <a class="page-btn"><i class="fas fa-angle-double-left"></i></a>
+                <?php
+                } else {
+                ?>
+                    <a href="?page=1" class="page-btn"><i class="fas fa-angle-double-left"></i></a>
+                <?php
+                }
+                ?>
+                <?php if($page <= 1) { ?>
+                    <a class="page-btn"><i class="fas fa-angle-left"></i></a>
+                <?php
+                } else {
+                    $pre = $page - 1;
+                ?>
+                    <a href="?page=<?php echo $pre; ?>" class="page-btn"><i class="fas fa-angle-left"></i></a>
+                <?php
+                }
+                ?>
+                <?php
+                for($i = $block_start; $i <= $block_end; $i++){
+                    if($page == $i){
+                ?>
+                <button href="#" class="page-btn active"><?php echo $i; ?></button>
+                <?php
+                } else {
+                ?>
+                    <a href="?page=<?php echo $i; ?>" class="page-btn"><?php echo $i; ?></a>
+                    <?php
+                    }
+                    ?>
+                <?php
+                }
+                ?>
+                <?php
+                if($page >= $total_page){
+                ?>
+                    <a class="page-btn"><i class="fas fa-angle-right"></i></a>
+                    <?php
+                } else {
+                    $next = $page + 1;
+                ?>
+                    <a href="?page=<?php echo $next; ?>" class="page-btn"><i class="fas fa-angle-right"></i></a>
+                <?php
+                }
+                ?>
+                <?php
+                if($block_num >= $total_block){
+                ?>
+                    <a class="page-btn"><i class="fas fa-angle-double-right"></i></a>
+                <?php
+                } else {
+                ?>
+                    <a href="?page=<?php echo $total_page; ?>" class="page-btn"><i class="fas fa-angle-double-right"></i></a>
+                <?php
+                }
+                ?>
             </div>
         </div>
-    </div>
 </body>
 </html>

@@ -8,6 +8,98 @@
     <link rel="stylesheet" href="./css/common.css">
     <link rel="stylesheet" href="./css/webfont.css">
     <link rel="stylesheet" href="./css/login.css">
+    <script src="https://developers.kakao.com/sdk/js/kakao.min.js"></script>
+    <script src="https://static.nid.naver.com/js/naveridlogin_js_sdk_2.0.2.js" charset="utf-8"></script>
+    <script>
+    Kakao.init('455d961c1f12d1c88656c0214f20de9f'); //발급받은 키 중 javascript키를 사용해준다.
+    console.log(Kakao.isInitialized()); // sdk초기화여부판단
+    //카카오로그인
+    function kakaoLogin() {
+        Kakao.Auth.login({
+            
+        success: function (response) {
+            Kakao.API.request({
+            url: 'http://nanunna18.dothome.co.kr/deliway/code/PHP/oauth.php',
+            success: function (response) {
+                console.log(response)
+            },
+            fail: function (error) {
+                console.log(error)
+            },
+            })
+        },
+        fail: function (error) {
+            console.log(error)
+        },
+        })
+    }
+    //카카오로그아웃  
+    function kakaoLogout() {
+        if (Kakao.Auth.getAccessToken()) {
+        Kakao.API.request({
+            url: '/v1/user/unlink',
+            success: function (response) {
+                console.log(response)
+            },
+            fail: function (error) {
+            console.log(error)
+            },
+        })
+        Kakao.Auth.setAccessToken(undefined)
+        }
+    }  
+    </script>
+
+<script>
+
+    var naverLogin = new naver.LoginWithNaverId(
+            {
+                clientId: "GQ7QQ3sur5IuKNJLcY1V", 
+                callbackUrl: "http://nanunna18.dothome.co.kr/deliway/code/PHP/naverLogin.php",
+                isPopup: false,
+                callbackHandle: true
+            }
+        );	
+    
+    naverLogin.init();
+    
+    window.addEventListener('load', function () {
+        naverLogin.getLoginStatus(function (status) {
+            if (status) {
+                var email = naverLogin.user.getEmail(); 
+                
+                console.log(naverLogin.user); 
+                
+                if( email == undefined || email == null) {
+                    alert("이메일은 필수 정보입니다. 정보제공을 동의해주세요.");
+                    naverLogin.reprompt();
+                    return;
+                }
+            } else {
+                console.log("callback 처리에 실패하였습니다.");
+            }
+        });
+    });
+    
+    
+    var testPopUp;
+    function openPopUp() {
+        testPopUp= window.open("https://nid.naver.com/nidlogin.logout", "_blank", "toolbar=yes,scrollbars=yes,resizable=yes,width=1,height=1");
+    }
+    function closePopUp(){
+        testPopUp.close();
+    }
+    
+    function naverLogout() {
+        openPopUp();
+        setTimeout(function() {
+            closePopUp();
+            }, 1000);
+        
+        
+    }
+    </script>
+
 </head>
 
 <body>
@@ -15,8 +107,20 @@
         <h1><a href="#">Deliway</a></h1>
     </header>
     <main>
-        <a href="#" class="title loginWay"><span>카카오로 간편 로그인</span></a>
-        <a href="#" class="title loginWay"><span>네이버로 간편 로그인</span></a>
+        <?php
+        $restAPIKey = "a36c77da50926b27bb9601a29aa1597f";
+        $callbackURI = "http://nanunna18.dothome.co.kr/deliway/code/PHP/oauth.php";
+        $kakaoLoginURL = "https://kauth.kakao.com/oauth/authorize?client_id=".$restAPIKey."&redirect_uri=".$callbackURI."&response_type=code";
+        ?>
+        <a href="<?php echo $kakaoLoginURL; ?>" class="title loginWay"><span>카카오로 간편 로그인</span></a>
+
+        <?php 
+        define('NAVER_CLIENT_ID', 'GQ7QQ3sur5IuKNJLcY1V');
+        define('NAVER_CLIENT_SECRET', 'j4YK3PvoAB');
+        define('NAVER_CALLBACK_URL', 'http://nanunna18.dothome.co.kr/deliway/code/PHP/naverLogin.php');
+        $naverUrl = "https://nid.naver.com/oauth2.0/authorize?response_type=code&client_id=".NAVER_CLIENT_ID."&redirect_uri=".urlencode(NAVER_CALLBACK_URL);
+        ?>
+        <a href="<?php echo $naverUrl;?>" class="title loginWay"><span>네이버로 간편 로그인</span></a>
         <a href="./login_email.html" class="title loginWay"><span>델리웨이 계정 로그인</span></a>
     </main>
 </body>

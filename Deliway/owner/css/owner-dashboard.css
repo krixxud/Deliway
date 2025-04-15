@@ -37,6 +37,10 @@
   background-color: var(--primary-dark);
 }
 
+.store-avatar > img {
+  border-radius: 50%;
+}
+
 .store-status {
   display: inline-flex;
   align-items: center;
@@ -52,6 +56,11 @@
 .quick-actions {
   display: flex;
   gap: 1rem;
+}
+
+a {
+  text-decoration: none;
+  color: white;
 }
 
 /* Enhanced Stats Container */

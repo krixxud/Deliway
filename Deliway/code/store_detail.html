@@ -1,10 +1,21 @@
+<?php
+session_start();
+include "../config/db.php";
+
+$store_idx = $_GET['store_idx'];
+$sql = "select * from store where store_idx='".$store_idx."'";
+$result = mysqli_query($con, $sql);
+$row = mysqli_fetch_array($result);
+?>
 <!DOCTYPE html>
 <html lang="ko">
 
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>제주 고씨 든렘지 레스토랑</title>
+  <title>
+    <?php echo $row['store_name'];?>
+  </title>
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
   <link rel="stylesheet" href="css/common.css">
   <link rel="stylesheet" href="css/webfont.css">
@@ -33,13 +44,13 @@
       <div class="swiper mySwiper">
         <div class="swiper-wrapper">
           <div class="swiper-slide">
-            <img src="https://placehold.co/400x244" alt="main-slider1">
+            <img src="./upload/<?php echo $row['file_copied_2'];?>" alt="main-slider1">
           </div>
           <div class="swiper-slide">
-            <img src="https://placehold.co/400x244" alt="main-slider2">
+            <img src="./upload/<?php echo $row['file_copied_3'];?>" alt="main-slider2">
           </div>
           <div class="swiper-slide">
-            <img src="https://placehold.co/400x244" alt="main-slider3">
+            <img src="./upload/<?php echo $row['file_copied_4'];?>" alt="main-slider3">
           </div>
         </div>
         <div class="swiper-pagination"></div>
@@ -60,28 +71,66 @@
   </header>
   <!-- main -->
   <main>
+    <?php 
+    $sql2 = "select count(*) as cnt from review where store_idx='".$row['store_idx']."'"; // 해당 레코드의 갯수를 파악하는 구문
+    $result2 = mysqli_query($con, $sql2);
+    $row2 = mysqli_fetch_array($result2);
+
+    $sql3 = "select sum(review_score) as ts from review where store_idx='".$row['store_idx']."'"; // 해당 필드의 합
+    $result3 = mysqli_query($con, $sql3);
+    $row3 = mysqli_fetch_array($result3);
+
+    if ($row2['cnt'] !=0) {
+      $total_score = $row3['ts']/$row2['cnt'];
+    } else {
+      $total_score = 0;
+    }
+    ?>
     <!-- store info -->
     <section class="store-info-section">
       <h2 class="hidden">매장정보</h2>
       <div class="store-stats">
         <dl>
-          <dt class="body1">★</dt>
-          <dd class="sub-title1">4.5</dd>
+          <dt class="body1">
+            <img class="rating" src="../icon/star.png" alt="평점"><span class="hidden">평점</span>
+          </dt>
+          <dd class="sub-title1">
+            <?php echo round($total_score,1);?>
+          </dd>
         </dl>
         <dl>
           <dt>리뷰</dt>
-          <dd class="sub-title1">1,000</dd>
+          <dd class="sub-title1">
+            <?php echo number_format($row2['cnt']);?>
+          </dd>
         </dl>
-        <span class="body1">드라이브 가능</span>
+        <span class="body1">DRIVE UP</span>
       </div>
       <div class="store-heading">
-        <h3 class="title">제주 고씨 든렘지 레스토랑</h3>
-        <p class="body1">제주도 로컬푸드를 사용한 이탈리안 레스토랑으로 제주의 맛과 멋을 담은 특별한 요리를 선보입니다.</p>
+        <h3 class="title">
+          <?php echo $row['store_name'];?>
+        </h3>
+        <p class="body1">
+          <?php echo $row['store_memo'];?>
+        </p>
       </div>
       <div class="store-tags">
-        <p>단체 이용 가능</p>
-        <p>아기의자</p>
-        <p>주차가능</p>
+        <p>
+          <?php if($row['store_option1'] == "1") { ?> 주차가능
+          <?php } ?>
+        </p>
+        <p>
+          <?php if($row['store_option2'] == "1") { ?> 화장실
+          <?php } ?>
+        </p>
+        <p>
+          <?php if($row['store_option3'] == "1") { ?> 무선인터넷
+          <?php } ?>
+        </p>
+        <p>
+          <?php if($row['store_option4'] == "1") { ?> 단체석가능
+          <?php } ?>
+        </p>
       </div>
       <div class="store-details">
         <dl>
@@ -90,7 +139,18 @@
         </dl>
         <dl>
           <dt class="body1"><i class="fa-regular fa-clock icon"></i><span class="hidden">영업시간</span></dt>
-          <dd>오늘 (수) 10:00 - 21:30</dd>
+          <?php
+          // 요일 배열 (일~토)
+          $days = ["일", "월", "화", "수", "목", "금", "토"];
+
+          // 현재 요일 가져오기
+          $today = date("w"); // 0: 일 ~ 6: 토
+          ?>
+          <dd>(
+            <?php echo $days[$today];?>) &nbsp;
+            <?php echo $row['store_weekday1'];?> -
+            <?php echo $row['store_weekday2'];?>
+          </dd>
         </dl>
         <dl>
           <dt class="body1"><i class="fa-solid fa-sack-dollar icon"></i><span class="hidden">가격 안내</span></dt>
@@ -111,27 +171,32 @@
       </nav>
     </section>
     <!-- menu section -->
+    <?php
+     $sql1 = "select * from menu where store_idx='".$row['store_idx']."' order by menu_idx desc limit 3";
+     $result1 = mysqli_query($con, $sql1);
+     ?>
     <section class="store-menu-section">
-      <h2 class="title">메뉴</h2>
+      <h2 class="title">대표메뉴</h2>
+      <?php
+      while($row1 = mysqli_fetch_array($result1)){ ?>
       <dl>
-        <dt class="sub-title1">라구 로마뇰라</dt>
-        <dd class="body1" style="color: var(--text-grey);">발음하기도 빡세네요</dd>
-        <dd class="price body1">520,000원</dd>
-        <dd class="photo"><img src="https://placehold.co/100" alt="라구 로마뇰라"></dd>
+        <dt class="sub-title1">
+          <?php echo $row1['store_menu_name'];?>
+        </dt>
+        <dd class="body1" style="color: var(--text-grey);">
+          <?php echo $row1['store_menu_memo'];?>
+        </dd>
+        <dd class="price body1">
+          <?php echo number_format($row1['store_menu_cost']);?>원
+        </dd>
+        <dd class="photo">
+          <div class="menu_img">
+            <img src="./upload/<?php echo $row1['file_copied_0'];?>">
+          </div>
+        </dd>
       </dl>
-      <dl>
-        <dt class="sub-title1">토마 호크</dt>
-        <dd class="body1" style="color: var(--text-grey);">스테....이크! 에크!</dd>
-        <dd class="price body1">520,000원</dd>
-        <dd class="photo"><img src="https://placehold.co/100" alt=""></dd>
-      </dl>
-      <dl>
-        <dt class="sub-title1">노브랜드버거 샐러드</dt>
-        <dd class="body1" style="color: var(--text-grey);">이거 맛있더라고요</dd>
-        <dd class="price body1">520,000원</dd>
-        <dd class="photo"><img src="https://placehold.co/100" alt=""></dd>
-      </dl>
-      <a class="seemore body1" href="menu_more.html">전체보기</a>
+      <?php } ?>
+      <a class="seemore body1" href="menu_more.html?store_idx=<?php echo $row['store_idx'];?>">전체보기</a>
     </section>
     <!-- news section -->
     <section class="news-section">
@@ -174,112 +239,227 @@
     </section>
     <!-- review section -->
     <section>
+      <?php 
+      $sql_1 = "select * from review where store_idx='".$row['store_idx']."' order by review_wdate desc limit 3";
+      $result_1 = mysqli_query($con, $sql_1);
+      ?>
       <h2 class="title">방문자 리뷰</h2>
       <!-- review 1 -->
+      <?php
+      while($row_1 = mysqli_fetch_array($result_1)){
+
+      $sql_2 = "select * from member where user_id='".$row_1['user_id']."'";
+      $result_2 = mysqli_query($con, $sql_2);
+      $row_2 = mysqli_fetch_array($result_2);
+      ?>
       <div class="review-container">
         <div class="review-header">
           <div class="user-info">
             <div class="profile-image">
-              <img src="https://placehold.co/40" alt="프로필 이미지">
+              <img src="upload/<?php echo $row_2['file_copied_0'];?>" width="40" height="40" onclick="openModal(this)">
             </div>
             <div class="detail-wrap">
               <div class="user-details">
-                <p class="username sub-title1">헤르미온느</p>
-                <span class="review-date body1">2023.12.19</span>
+                <p class="username sub-title1">
+                  <?php echo $row_2['user_name'];?>
+                </p>
+                <?php
+                // 가져온 시간 (데이터베이스에서 가져온 작성 시간)
+                $created_at = $row_1['review_wdate'];
+                // 상대적 시간 계산 함수
+                if (!function_exists('time_elapsed_string')) {
+                  function time_elapsed_string($datetime, $full = false) {
+                    $now = new DateTime;
+                    $ago = new DateTime($datetime);
+                    $diff = $now->diff($ago);
+                
+                    if ($diff->y > 0) return $diff->y . '년 전';
+                    if ($diff->m > 0) return $diff->m . '개월 전';
+                    if ($diff->d > 0) return $diff->d . '일 전';
+                    if ($diff->h > 0) return $diff->h . '시간 전';
+                    if ($diff->i > 0) return $diff->i . '분 전';
+                    return $diff->s . '초 전';
+                }
+              }
+
+                // 변환된 시간 출력
+                $time_ago = time_elapsed_string($created_at);
+                ?>
+                <span class="review-date body1">
+                  <?php echo $time_ago; ?>
+                </span>
               </div>
               <div class="star-rating">
-                ★★★★★
+                <?php if ($row_1['review_score']=="5") {
+                  echo "★★★★★";
+                } elseif ($row_1['review_score']=="4") {
+                  echo "★★★★";
+                } elseif ($row_1['review_score']=="3") {
+                  echo "★★★";
+                } elseif ($row_1['review_score']=="2") {
+                  echo "★★";
+                } elseif ($row_1['review_score']=="1") {
+                  echo "★";
+                } 
+                ?>
               </div>
             </div>
           </div>
         </div>
         <div class="review-content">
+          <p class="review-title sub-title1">
+            <?php echo $row_1['review_title'];?>
+          </p>
+
           <p class="review-text body2">
-            처음에 들어갔을때 예쁜 공간이 눈에 들어와요. 음식 맛도 좋고 특히 조명에서 나오는 빛이 너무 예뻐 몽환적인 분위기로 데이트 필수코스입니다!
-            인테리어가 정말 예쁘네요. 최고에요!
+            <?php echo $row_1['review_memo'];?>
           </p>
           <div class="review-images">
-            <img src="https://placehold.co/120" alt="리뷰 이미지 1">
-            <img src="https://placehold.co/120" alt="리뷰 이미지 2">
-            <img src="https://placehold.co/120" alt="리뷰 이미지 3">
-            <img src="https://placehold.co/120" alt="리뷰 이미지 4">
-            <img src="https://placehold.co/120" alt="리뷰 이미지 5">
-            <img src="https://placehold.co/120" alt="리뷰 이미지 6">
+            <img src="upload/<?php echo $row_1['file_copied_0'];?>" width="120" height="120" border-radius="8px"
+              onclick="openModal(this)">
+            <?php if($row_1['file_copied_1']==""){
+            } else {?>
+            <img src="upload/<?php echo $row_1['file_copied_1'];?>" width="120" height="120" border-radius="8px"
+              onclick="openModal(this)">
+            <?php }?>
+            <?php if($row_1['file_copied_2']==""){
+            } else {?>
+            <img src="upload/<?php echo $row_1['file_copied_2'];?>" width="120" height="120" border-radius="8px"
+              onclick="openModal(this)">
+            <?php }?>
+            <?php if($row_1['file_copied_3']==""){
+            } else {?>
+            <img src="upload/<?php echo $row_1['file_copied_3'];?>" width="120" height="120" border-radius="8px"
+              onclick="openModal(this)">
+            <?php }?>
+            <?php if($row_1['file_copied_4']==""){
+            } else {?>
+            <img src="upload/<?php echo $row_1['file_copied_4'];?>" width="120" height="120" border-radius="8px"
+              onclick="openModal(this)">
+            <?php }?>
           </div>
         </div>
+
+        <script>
+          // 이미지 클릭 시 모달을 열기
+          function openModal(imgElement) {
+            const modal = document.createElement('div');
+            modal.classList.add('modal');
+
+            // 이미지 추가
+            const modalImage = document.createElement('img');
+            modalImage.src = imgElement.src;
+            modal.appendChild(modalImage);
+
+            // 모달을 클릭하면 닫히게 설정
+            modal.onclick = function (event) {
+              if (event.target === modal) {
+                modal.style.display = 'none';
+              }
+            };
+
+            // 모달을 body에 추가
+            document.body.appendChild(modal);
+
+            // 모달 표시
+            modal.style.display = 'flex';
+          }
+        </script>
+
+        <?php
+        $sqlre = "select count(*) as cnt from review_like where reser_idx='".$row_1['reser_idx']."' and user_like=1";
+        $resultre = mysqli_query($con, $sqlre);
+        $rowre = mysqli_fetch_array($resultre);
+
+        $sqllike = "select * from review_like where reser_idx='".$row_1['reser_idx']."' and user_idx='".$_COOKIE['user_idx']."'";
+        $resultlike = mysqli_query($con, $sqllike);
+        $rowlike = mysqli_fetch_array($resultlike);
+        ?>
 
         <div class="review-actions">
           <button class="like-btn sub-title1">
-            <img class="like-icon1 active" src="../icon/like.png" alt="좋아요">
-            <img class="like-icon2" src="../icon/liked.png" alt="좋아요">
-            <span class="like-count">10</span>
+            <?php if ($rowlike['user_like'] == "" || $rowlike['user_like'] == "0") { ?>
+              <a href="review_like.html?store_idx=<?php echo $row['store_idx'];?>&user_idx=<?php echo $_COOKIE['user_idx'];?>&reser_idx=<?php echo $row_1['reser_idx'];?>&review_idx=<?php echo $row_1['review_idx'];?>&user_like=1">
+                <img class="like-icon1 active" src="../icon/like.png" alt="좋아요" width="22" height="22">
+                <img class="like-icon2" src="../icon/liked.png" alt="좋아요" width="22" height="22" style="display: none;">
+              </a>
+            <?php } else { ?>
+              <a href="review_like.html?store_idx=<?php echo $row['store_idx'];?>&user_idx=<?php echo $_COOKIE['user_idx'];?>&reser_idx=<?php echo $row_1['reser_idx'];?>&review_idx=<?php echo $row_1['review_idx'];?>&user_like=0">
+                <img class="like-icon1" src="../icon/like.png" alt="좋아요" width="22" height="22" style="display: none;">
+                <img class="like-icon2 active" src="../icon/liked.png" alt="좋아요" width="22" height="22">
+              </a>
+            <?php } ?>
+            <span class="like-count">
+              <?php echo $rowre['cnt'];?>
+            </span>
           </button>
           <button class="comment-btn sub-title1">
-            <img src="../icon/comment.png" alt="comment-icon">
-            <span class="comment-count">3</span>
+            <a href="review_detail.html?review_idx=<?php echo $row_1['review_idx'];?>"><img src="../icon/comment.png" alt="comment-icon"></a>
+            <?php
+                  $sql3 = "select count(*) as cnt1 from reply where review_idx='".$row_1['review_idx']."'";
+                  $result3 = mysqli_query($con, $sql3);
+                  $row3 = mysqli_fetch_array($result3);
+                  ?>
+            <span class="comment-count"><?php echo $row3['cnt1'];?></span>
           </button>
         </div>
       </div>
-
-      <!-- review 2 will be deprecated -->
-      <div class="review-container">
-        <div class="review-header">
-          <div class="user-info">
-            <div class="profile-image">
-              <img src="https://placehold.co/40" alt="프로필 이미지">
-            </div>
-            <div class="detail-wrap">
-              <div class="user-details">
-                <p class="username sub-title1">헤르미온느</p>
-                <span class="review-date body1">2023.12.19</span>
-              </div>
-              <div class="star-rating">
-                ★★★★★
-              </div>
-            </div>
-          </div>
-        </div>
-        <div class="review-content">
-          <p class="review-text body2">
-            처음에 들어갔을때 예쁜 공간이 눈에 들어와요. 음식 맛도 좋고 특히 조명에서 나오는 빛이 너무 예뻐 몽환적인 분위기로 데이트 필수코스입니다!
-            인테리어가 정말 예쁘네요. 최고에요!
-          </p>
-          <div class="review-images">
-            <img src="https://placehold.co/120" alt="리뷰 이미지 1">
-            <img src="https://placehold.co/120" alt="리뷰 이미지 2">
-            <img src="https://placehold.co/120" alt="리뷰 이미지 3">
-            <img src="https://placehold.co/120" alt="리뷰 이미지 4">
-            <img src="https://placehold.co/120" alt="리뷰 이미지 5">
-            <img src="https://placehold.co/120" alt="리뷰 이미지 6">
-          </div>
-        </div>
-        <div class="review-actions">
-          <button class="likeFunction like-btn sub-title1">
-            <img class="like-icon1 active" src="../icon/like.png" alt="좋아요">
-            <img class="like-icon2" src="../icon/liked.png" alt="좋아요">
-            <span class="like-count">10</span>
-          </button>
-          <button class="comment-btn sub-title1">
-            <img src="../icon/comment.png" alt="comment-icon">
-            <span class="comment-count">3</span>
-          </button>
-        </div>
-      </div>
-      <a class="seemore body1" href="./review_more.html">전체보기</a>
+      <?php
+      }
+      ?>
+      <a class="seemore body1" href="./review_more.html?store_idx=<?php echo $row['store_idx'];?>">전체보기</a>
     </section>
     <!-- 오시는 길 -->
     <section class="map-section">
       <h2 class="title">오시는 길</h2>
-      <div class="map">
-        <iframe
-          src="https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d3165.3350067188517!2d127.03155294984232!3d37.50001615612253!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x357ca3fe3854fd13%3A0xdbb2d70b1648d2ce!2z6rWs6riA7L2U66as7JWEIOuzuOyCrA!5e0!3m2!1sko!2skr!4v1740631602548!5m2!1sko!2skr"
-          width="600" height="450" style="border: 0" allowfullscreen="" loading="lazy"
-          referrerpolicy="no-referrer-when-downgrade"></iframe>
-      </div>
+      <div id="map" style="width:100%; height:250px; margin: 20px 0 10px; border-radius: 10px;"></div>
+
+      <script type="text/javascript"
+        src="//dapi.kakao.com/v2/maps/sdk.js?appkey=455d961c1f12d1c88656c0214f20de9f&libraries=services"></script>
+      <script>
+        var mapContainer = document.getElementById('map'), // 지도를 표시할 div 
+          mapOption = {
+            center: new kakao.maps.LatLng(33.450701, 126.570667), // 지도의 중심좌표
+            level: 3 // 지도의 확대 레벨
+          };
+
+        // 지도를 생성합니다    
+        var map = new kakao.maps.Map(mapContainer, mapOption);
+
+        // 주소-좌표 변환 객체를 생성합니다
+        var geocoder = new kakao.maps.services.Geocoder();
+
+        // 주소로 좌표를 검색합니다
+        geocoder.addressSearch('<?php echo $row['store_address1']?>', function (result, status) {
+
+          // 정상적으로 검색이 완료됐으면 
+          if (status === kakao.maps.services.Status.OK) {
+
+            var coords = new kakao.maps.LatLng(result[0].y, result[0].x);
+
+            // 결과값으로 받은 위치를 마커로 표시합니다
+            var marker = new kakao.maps.Marker({
+              map: map,
+              position: coords
+            });
+
+            // 인포윈도우로 장소에 대한 설명을 표시합니다
+            var infowindow = new kakao.maps.InfoWindow({
+              content: '<div style="width:150px;text-align:center;padding:6px 0;"><?php echo $row['store_name'];?></div>'
+              });
+            infowindow.open(map, marker);
+
+            // 지도의 중심을 결과값으로 받은 위치로 이동시킵니다
+            map.setCenter(coords);
+          }
+        });    
+      </script>
       <div class="store-location">
         <div class="location-text">
           <div class="gps"></div>
-          <p>가게의 위치가 나오는 영역</p>
+          <p>
+            <?php echo $row['store_address1'];?>
+          </p>
         </div>
         <button>
           <i class="fa-regular fa-copy"><span class="hidden">복사</span></i>
@@ -307,7 +487,7 @@
         </a>
       </div>
       <div class="reservation-button">
-        <a href="./reser_detail.html" class="sub-title1">예약하기</a>
+        <a href="./reser_detail.html?store_idx=<?php echo $row['store_idx'];?>" class="sub-title1">예약하기</a>
       </div>
     </div>
   </main>

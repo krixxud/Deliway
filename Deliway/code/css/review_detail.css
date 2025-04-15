@@ -113,6 +113,11 @@ section .section-title {
     margin-bottom: 16px;
 }
 
+.review-title {
+    margin-bottom: 10px;
+    line-height: 1.5;
+}
+
 .review-text {
     margin-bottom: 20px;
     line-height: 1.5;
@@ -131,6 +136,27 @@ section .section-title {
     border-radius: 8px;
     object-fit: cover;
 }
+
+/* 모달 배경 */
+.modal {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background-color: rgba(0, 0, 0, 0.8);
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    z-index: 1000;
+  }
+  
+  .modal img {
+    max-width: 90%;
+    max-height: 90%;
+    object-fit: contain;
+    border-radius: 15px;
+  }
 
 /* 스크롤바 숨기기 */
 .review-images::-webkit-scrollbar {
@@ -219,7 +245,7 @@ section .section-title {
 
 .comment-text {
     color: var(--black);
-    padding-left: 40px;
+    padding-left: 50px;
 }
 
 .comment-reply {
@@ -284,10 +310,10 @@ section .section-title {
 }
 
 .comment-input {
-    width: 100%;
+    width: 80%;
     border-radius: 20px;
     outline: none;
-    height: 50px;
+    line-height: 25px;
     padding: 8px 16px;
     border: 1px solid var(--background-grey);
     background: var(--white);
@@ -299,7 +325,6 @@ section .section-title {
 
 .submit-btn {
     position:absolute;
-    top: 8px;
     right: 12px;
     background: none;
     border: none;

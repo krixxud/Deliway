@@ -24,8 +24,8 @@ form {
     width: 100%;
 }
 
-input{
-    margin: 15px 0 20px;
+.login-placeholder {
+    margin: 15px 0 5px;
     width: 100%;
     padding: 0 15px;
     height: 70px;
@@ -33,9 +33,67 @@ input{
     border: 1px solid var(--text-grey);
 }
 
+.target { 
+    margin-top: 20px;
+}
+
+#sample5_address {
+    margin: 15px 0 0px;
+    width: 100%;
+    padding: 0 15px;
+    height: 70px;
+    border-radius: 10px;
+    border: 1px solid var(--text-grey);
+}
+
+.input-group {
+    position: relative;
+}
+
+.input-group label {
+    display: block;
+}
+
+/* .input-group input,
+.input-group textarea {
+    margin-top: 10px;
+    width: 100%;
+    padding: 15px;
+    border: 1px solid var(--text-grey);
+    border-radius: 8px;
+    font-size: 16px;
+} */
+
+.input-group input[type="button"]{
+    position: absolute;
+    top: 39.5px;
+    right: 5px;
+    width: auto;
+    line-height: 40px;
+    padding: 10px 20px;
+    display: block;
+    color: var(--white);
+    background: var(--primary);
+    border: none;
+    border-radius: 10px;
+}
+
 input:focus {
     outline: none;
     border: 2px solid var(--primary);
+}
+
+textarea:focus {
+    outline: none;
+    border: 2px solid var(--primary);
+}
+
+#map {
+    width: 100%;
+    height: 300px;
+    margin-bottom: 100px;
+    border-radius: 10px;
+    display: none;
 }
 .next {
     position: fixed;
@@ -48,4 +106,5 @@ input:focus {
     border: none;
     border-radius: 10px;
     cursor: pointer;
+    z-index: 999;
 }

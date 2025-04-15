@@ -44,10 +44,9 @@
         </label>
         <label>
           <input type="checkbox" name="agree" value="5">
-          광고성 정보 수신동의<span class="optional">(선택)</span
-          >
+          광고성 정보 수신동의<span class="optional">(선택)</span>
         </label>
-        <button class="next title" type="button" onclick="window.location.href = 'login_verification.html'" class="title">다음</button>
+        <button class="next title" type="button" onclick="window.location.href = 'login_verification.html?code=<?php echo $_GET['code'];?>'" class="title">다음</button>
       </form>
     </main>
     <script>

@@ -1,3 +1,21 @@
+<?php
+session_start();
+include "../config/db.php";
+
+$review_idx = $_GET['review_idx'];
+$sql = "select * from review where review_idx='".$review_idx."'";
+$result = mysqli_query($con, $sql);
+$row = mysqli_fetch_array($result);
+
+$sql1 = "select * from member where user_id='".$row['user_id']."'";
+$result1 = mysqli_query($con, $sql1);
+$row1 = mysqli_fetch_array($result1);
+
+$sql2 = "select * from store where store_idx='".$row['store_idx']."'";
+$result2 = mysqli_query($con, $sql2);
+$row2 = mysqli_fetch_array($result2);
+?>
+
 <!DOCTYPE html>
 <html lang="ko">
 
@@ -15,8 +33,11 @@
 <body>
     <header>
         <div class="page-header">
-            <a href="#" onclick="goBack(event)"  class="back-btn"><i class="fa fa-angle-left icon"></i><span class="hidden">뒤로가기</span></a>
-            <h1 class="title">매장 이름</h1>
+            <a href="#" onclick="goBack(event)" class="back-btn"><i class="fa fa-angle-left icon"></i><span
+                    class="hidden">뒤로가기</span></a>
+            <h1 class="title">
+                <?php echo $row2['store_name'];?>
+            </h1>
             <div class="header-placeholder"></div>
         </div>
     </header>
@@ -27,121 +48,267 @@
             <div class="review-header">
                 <div class="user-info">
                     <div class="profile-image">
-                        <img src="https://placehold.co/40" alt="프로필 이미지">
+                        <img src="./upload/<?php echo $row1['file_copied_0'];?>" onclick="openModal(this)">
                     </div>
                     <div class="detail-wrap">
                         <div class="user-details">
-                            <p class="username sub-title1">둔산동 몽키스패너</p>
-                            <span class="review-date body1">1시간</span>
+                            <p class="username sub-title1">
+                                <?php echo $row1['user_name'];?>
+                            </p>
+                            <?php
+                            // 가져온 시간 (데이터베이스에서 가져온 작성 시간)
+                            $created_at = $row['review_wdate'];
+                            // 상대적 시간 계산 함수
+                            if (!function_exists('time_elapsed_string')) {
+                            function time_elapsed_string($datetime, $full = false) {
+                                $now = new DateTime;
+                                $ago = new DateTime($datetime);
+                                $diff = $now->diff($ago);
+                            
+                                if ($diff->y > 0) return $diff->y . '년 전';
+                                if ($diff->m > 0) return $diff->m . '개월 전';
+                                if ($diff->d > 0) return $diff->d . '일 전';
+                                if ($diff->h > 0) return $diff->h . '시간 전';
+                                if ($diff->i > 0) return $diff->i . '분 전';
+                                return $diff->s . '초 전';
+                                }
+                            }
+
+                            // 변환된 시간 출력
+                            $time_ago = time_elapsed_string($created_at);
+                            ?>
+                            <span class="review-date body1">
+                                <?php echo $time_ago; ?>
+                            </span>
                         </div>
                         <div class="star-rating">
-                            ★★★★★
+                            <?php if ($row['review_score']=="5") {
+                                echo "★★★★★";
+                              } elseif ($row['review_score']=="4") {
+                                echo "★★★★";
+                              } elseif ($row['review_score']=="3") {
+                                echo "★★★";
+                              } elseif ($row['review_score']=="2") {
+                                echo "★★";
+                              } elseif ($row['review_score']=="1") {
+                                echo "★";
+                              } 
+                              ?>
                         </div>
                     </div>
                 </div>
             </div>
             <div class="review-content">
+                <p class="review-title sub-title1">
+                    <?php echo $row['review_title'];?>
+                </p>
+
                 <p class="review-text body2">
-                    처음에 들어갔을때 예쁜 공간이 눈에 들어와요. 음식 맛도 좋고 특히 조명에서 나오는 빛이 너무 예뻐 몽환적인 분위기로 데이트 필수코스입니다!
-                    인테리어가 정말 예쁘네요. 최고에요!
+                    <?php echo $row['review_memo'];?>
                 </p>
                 <div class="review-images">
-                    <img src="https://placehold.co/120" alt="리뷰 이미지 1">
-                    <img src="https://placehold.co/120" alt="리뷰 이미지 2">
-                    <img src="https://placehold.co/120" alt="리뷰 이미지 3">
-                    <img src="https://placehold.co/120" alt="리뷰 이미지 4">
-                    <img src="https://placehold.co/120" alt="리뷰 이미지 5">
+                    <img src="upload/<?php echo $row['file_copied_0'];?>" width="120" height="120" border-radius="8px"
+                        onclick="openModal(this)">
+                    <?php if($row['file_copied_1']==""){
+                    } else {?>
+                    <img src="upload/<?php echo $row['file_copied_1'];?>" width="120" height="120" border-radius="8px"
+                        onclick="openModal(this)">
+                    <?php }?>
+                    <?php if($row['file_copied_2']==""){
+                    } else {?>
+                    <img src="upload/<?php echo $row['file_copied_2'];?>" width="120" height="120" border-radius="8px"
+                        onclick="openModal(this)">
+                    <?php }?>
+                    <?php if($row['file_copied_3']==""){
+                    } else {?>
+                    <img src="upload/<?php echo $row['file_copied_3'];?>" width="120" height="120" border-radius="8px"
+                        onclick="openModal(this)">
+                    <?php }?>
+                    <?php if($row['file_copied_4']==""){
+                    } else {?>
+                    <img src="upload/<?php echo $row['file_copied_4'];?>" width="120" height="120" border-radius="8px"
+                        onclick="openModal(this)">
+                    <?php }?>
                 </div>
             </div>
+
+            <script>
+                // 이미지 클릭 시 모달을 열기
+                function openModal(imgElement) {
+                    const modal = document.createElement('div');
+                    modal.classList.add('modal');
+
+                    // 이미지 추가
+                    const modalImage = document.createElement('img');
+                    modalImage.src = imgElement.src;
+                    modal.appendChild(modalImage);
+
+                    // 모달을 클릭하면 닫히게 설정
+                    modal.onclick = function (event) {
+                        if (event.target === modal) {
+                            modal.style.display = 'none';
+                        }
+                    };
+
+                    // 모달을 body에 추가
+                    document.body.appendChild(modal);
+
+                    // 모달 표시
+                    modal.style.display = 'flex';
+                }
+            </script>
+            </div>
+
+            <?php
+            $sqlre = "select count(*) as cnt from review_like where reser_idx='".$row['reser_idx']."' and user_like=1";
+            $resultre = mysqli_query($con, $sqlre);
+            $rowre = mysqli_fetch_array($resultre);
+    
+            $sqllike = "select * from review_like where reser_idx='".$row['reser_idx']."' and user_idx='".$_COOKIE['user_idx']."'";
+            $resultlike = mysqli_query($con, $sqllike);
+            $rowlike = mysqli_fetch_array($resultlike);
+            ?>
+
             <div class="review-actions">
                 <button class="like-btn sub-title1">
-                    <img class="like-icon1 active" src="../icon/likeBtn-active.png" alt="좋아요">
-                    <img class="like-icon2" src="../icon/liked.png" alt="좋아요">
-                    <span class="like-count">10</span>
+                    <?php if ($rowlike['user_like'] == "" || $rowlike['user_like'] == "0") { ?>
+                    <a
+                        href="inner_review_like.html?store_idx=<?php echo $row2['store_idx'];?>&user_idx=<?php echo $_COOKIE['user_idx'];?>&reser_idx=<?php echo $row['reser_idx'];?>&review_idx=<?php echo $row['review_idx'];?>&user_like=1">
+                        <img class="like-icon1 active" src="../icon/like.png" alt="좋아요" width="22" height="22">
+                        <img class="like-icon2" src="../icon/liked.png" alt="좋아요" width="22" height="22" style="display: none;">
+                    </a>
+                    <?php } else { ?>
+                    <a
+                        href="inner_review_like.html?store_idx=<?php echo $row2['store_idx'];?>&user_idx=<?php echo $_COOKIE['user_idx'];?>&reser_idx=<?php echo $row['reser_idx'];?>&review_idx=<?php echo $row['review_idx'];?>&user_like=0">
+                        <img class="like-icon1" src="../icon/like.png" alt="좋아요" width="22" height="22" style="display: none;">
+                        <img class="like-icon2 active" src="../icon/liked.png" alt="좋아요" width="22" height="22">
+                    </a>
+                    <?php } ?>
+                    <span class="like-count">
+                        <?php echo $rowre['cnt'];?>
+                    </span>
                 </button>
                 <button class="comment-btn sub-title1">
                     <img src="../icon/comment.png" alt="comment-icon">
-                    <span class="comment-count">3</span>
+                    <?php
+                  $sql5 = "select count(*) as cnt1 from reply where review_idx='".$row['review_idx']."'";
+                  $result5 = mysqli_query($con, $sql5);
+                  $row5 = mysqli_fetch_array($result5);
+                  ?>
+                    <span class="comment-count">
+                        <?php echo $row5['cnt1'];?>
+                    </span>
                 </button>
             </div>
         </section>
 
+        <?php
+        $sql3 = "select * from reply where review_idx='".$row['review_idx']."' order by reply_wdate desc";
+        $result3 = mysqli_query($con, $sql3);
+        ?>
+
         <section class="comments-container">
             <div class="comment-count-header">
-                <h2 class="sub-title2">댓글 3개</h2>
+                <h2 class="sub-title2">댓글
+                    <?php echo $row5['cnt1'];?>개
+                </h2>
             </div>
             <ul class="comment-list">
+                <?php
+                while($row3 = mysqli_fetch_array($result3)) {
+
+                    $sql4 = "select * from member where user_idx='".$row3['user_idx']."'";
+                    $result4 = mysqli_query($con, $sql4);
+                    $row4 = mysqli_fetch_array($result4);
+                ?>
                 <li class="comment-item">
                     <div class="comment-header">
                         <div class="comment-profile">
-                            <img src="https://placehold.co/30" alt="프로필사진">
-                            <p class="commenter-name body1-bold">마포 대빗자루</p>
-                            <span class="comment-date small">1주</span>
+                            <img src="./upload/<?php echo $row4['file_copied_0'];?>" width="40" height="40">
+                            <p class="commenter-name body1-bold">
+                                <?php echo $row4['user_name'];?>
+                            </p>
+
+                            <?php
+                            // 가져온 시간 (데이터베이스에서 가져온 작성 시간)
+                            $created_at = $row3['reply_wdate'];
+                            // 상대적 시간 계산 함수
+                            if (!function_exists('time_elapsed_string')) {
+                            function time_elapsed_string($datetime, $full = false) {
+                                $now = new DateTime;
+                                $ago = new DateTime($datetime);
+                                $diff = $now->diff($ago);
+                            
+                                if ($diff->y > 0) return $diff->y . '년 전';
+                                if ($diff->m > 0) return $diff->m . '개월 전';
+                                if ($diff->d > 0) return $diff->d . '일 전';
+                                if ($diff->h > 0) return $diff->h . '시간 전';
+                                if ($diff->i > 0) return $diff->i . '분 전';
+                                return $diff->s . '초 전';
+                            }
+                            }
+
+                            // 변환된 시간 출력
+                            $time_ago = time_elapsed_string($created_at);
+                            ?>
+                            <span class="comment-date small">
+                                <?php echo $time_ago; ?>
+                            </span>
                         </div>
                     </div>
                     <div class="comment-text">
-                        <p class="body2">정말 좋은 리뷰네요! 저도 꼭 가보고 싶어요.</p>
+                        <p class="body2">
+                            <?php echo $row3['reply_memo'];?>
+                        </p>
                         <p class="comment-reply small ">답글 달기</p>
                         <p class="comment-seemore small active">답글 더보기</p>
                     </div>
                 </li>
-                <li class="comment-item">
-                    <div class="comment-header">
-                        <div class="comment-profile">
-                            <img src="https://placehold.co/30" alt="프로필사진">
-                            <p class="commenter-name body1-bold">자갈치 간고등어</p>
-                            <span class="comment-date small">1시간</span>
-                        </div>
-                    </div>
-                    <div class="comment-text">
-                        <p class="body2">혹시 예약은 어떻게 하셨나요?</p>
-                        <p class="comment-reply small">답글 달기</p>
-                    </div>
-                </li>
-                <li class="comment-item">
-                    <div class="comment-header">
-                        <div class="comment-profile">
-                            <img src="https://placehold.co/30" alt="프로필사진">
-                            <p class="commenter-name body1-bold">지니 위즐리</p>
-                            <span class="comment-date small">20분</span>
-                        </div>
-                    </div>
-                    <div class="comment-text">
-                        <p class="body2">분위기가 정말 좋아 보이네요! 친구들과 가보려고요~</p>
-                        <p class="comment-reply small">답글 달기</p>
-                    </div>
-                </li>
+                <?php
+                }
+                ?>
             </ul>
         </section>
     </main>
     <!-- 댓글 입력창 -->
     <section class="comment-form-section">
         <h2 class="hidden">댓글 입력창</h2>
-        <form class="comment-form" action="#" method="post">
-                <input type="text" id="comment" name="comment" placeholder="댓글을 입력하세요..." class="comment-input">
-                <button type="submit" class="submit-btn"><img src="../icon/send.png" alt="전송"><span class="hidden">등록</span></button>
+        <form class="comment-form" action="./PHP/review_reply.php" method="post">
+            <input type="hidden" name="user_idx" value="<?php echo $_COOKIE['user_idx'];?>">
+            <input type="hidden" name="review_idx" value="<?php echo $row['review_idx'];?>">
+            <input type="hidden" name="reply_num" value="1">
+            <input type="textarea" id="comment" name="reply_memo" placeholder="댓글을 입력하세요" class="comment-input">
+            <button type="submit" class="submit-btn"><img src="../icon/send.png" alt="전송"><span
+                    class="hidden">등록</span></button>
         </form>
     </section>
     <script>
-        document.addEventListener('DOMContentLoaded', function () {
-            initializeLikeButtons();
+     document.addEventListener('DOMContentLoaded', function () {
+      // 좋아요 기능
+      function initializeLikeButtons() {
+        const likeButtons = document.querySelectorAll('.likeFunction');
+
+        likeButtons.forEach(likeButtons => {
+          likeButtons.addEventListener('click', function (e) {
+            e.preventDefault();
+            e.stopPropagation();
+
+            const icon1 = this.querySelector(".like-icon1"); //빈 하트
+            const icon2 = this.querySelector(".like-icon2"); //채워진 하트
+
+            if (icon1.classList.contains('active')) {
+              icon1.classList.remove('active');
+              icon2.classList.add('active');
+            } else {
+              icon1.classList.add('active');
+              icon2.classList.remove('active');
+            }
+          })
         })
-        function initializeLikeButtons() {
-            const likeButtons = document.querySelectorAll('.like-btn');
-
-            likeButtons.forEach(likeButton => {
-                likeButton.addEventListener('click', function (e) {
-                    e.preventDefault();
-                    e.stopPropagation();
-
-                    const icon1 = this.querySelector(".like-icon1");//빈 하트
-                    const icon2 = this.querySelector(".like-icon2");//채워진 하트
-
-                    icon1.classList.toggle('active');
-                    icon2.classList.toggle('active');
-                })
-            })
-        }
+      }
+      // 좋아요 기능 함수 호출
+      initializeLikeButtons();
+    });
     </script>
 </body>
 
